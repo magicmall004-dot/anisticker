@@ -29,7 +29,6 @@ create table if not exists categories (
 -- ── Designs ──────────────────────────────────────────────────
 create table if not exists designs (
   id              uuid primary key default gen_random_uuid(),
-  name            text not null,
   category_id     uuid references categories(id) on delete set null,
   type            text not null check (type in ('regular','adaptive')),
   file_url        text,                -- Supabase Storage URL

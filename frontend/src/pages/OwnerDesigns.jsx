@@ -7,7 +7,7 @@ import { formatPrice } from "../lib/utils";
 import { hapticNotification } from "../lib/telegram";
 
 const EMPTY = {
-  name:"", category_id:"", type:"regular",
+  category_id:"", type:"regular",
   file_url:"", file_type:"json",
   primary_color:"#000000", secondary_color:"#ffffff",
   has_text:false, user_price:0, reseller_price:0, is_visible:true,
@@ -49,7 +49,6 @@ export default function OwnerDesigns() {
   }
 
   async function save() {
-    if (!editing.name.trim()) return;
     setSaving(true);
     try {
       if (editing.id) {
@@ -71,7 +70,7 @@ export default function OwnerDesigns() {
   }
 
   async function handleDelete(design) {
-    if (!confirm(`Delete "${design.name}"?`)) return;
+    if (!confirm("Delete this design?")) return;
     await deleteDesign(design.id);
     await loadAll();
   }
@@ -86,13 +85,6 @@ export default function OwnerDesigns() {
           <button className="btn btn-ghost" style={{ padding:6 }} onClick={() => setEditing(null)}>
             <X size={18} />
           </button>
-        </div>
-
-        <div className="field">
-          <div className="label">Name *</div>
-          <input className="input" value={editing.name}
-            onChange={(e) => setEditing({...editing, name:e.target.value})}
-            placeholder="Design name" />
         </div>
 
         <div className="field">
@@ -202,7 +194,7 @@ export default function OwnerDesigns() {
           </div>
         </div>
 
-        <button className="btn btn-primary btn-full" disabled={saving || !editing.name.trim()}
+        <button className="btn btn-primary btn-full" disabled={saving}
           onClick={save} style={{ padding:"14px" }}>
           {saving ? "Saving…" : editing.id ? "Save Changes" : "Create Design"}
         </button>
@@ -234,7 +226,6 @@ export default function OwnerDesigns() {
                     display:"flex",alignItems:"center",justifyContent:"center",fontSize:20 }}>🎞</div>
                 )}
                 <div>
-                  <div style={{ fontWeight:600 }}>{d.name}</div>
                   <div style={{ fontSize:12, color:"var(--hint)" }}>
                     {d.category_name || "—"} · {d.type}
                   </div>

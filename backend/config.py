@@ -17,8 +17,8 @@ class Settings(BaseSettings):
     JWT_EXPIRE_HOURS: int = 168       # 7 days
 
     # ── App ───────────────────────────────────────────────────
+    # Your GitHub Pages URL (no trailing slash)
     FRONTEND_URL: str = "https://HtunHlaAung.github.io"
-    ALLOWED_ORIGINS: list[str] = ["*"]
     DEBUG: bool = False
 
     class Config:

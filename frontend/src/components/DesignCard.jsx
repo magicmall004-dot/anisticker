@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Check } from "lucide-react";
 import AnimationPreview from "./AnimationPreview";
-import { formatPrice, truncate } from "../lib/utils";
+import { formatPrice } from "../lib/utils";
 import { useApp } from "../context/AppContext";
 
 /**
@@ -69,7 +69,6 @@ export default function DesignCard({ design, onToggle }) {
 
       {/* Info */}
       <div style={{ padding:"10px 10px 12px" }}>
-        <div style={{ fontWeight:600, fontSize:13, marginBottom:4 }}>{truncate(design.name, 18)}</div>
         <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", gap:6 }}>
           {design.category_name && (
             <span style={{ fontSize:11, color:"var(--hint)", background:"rgba(255,255,255,.06)", padding:"2px 7px", borderRadius:99 }}>

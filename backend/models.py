@@ -30,7 +30,6 @@ class CategoryOut(BaseModel):
 
 # ── Designs ──────────────────────────────────────────────────
 class DesignCreate(BaseModel):
-    name: str
     category_id: Optional[str] = None
     type: str                          # regular | adaptive
     file_url: Optional[str] = None
@@ -44,7 +43,6 @@ class DesignCreate(BaseModel):
 
 
 class DesignUpdate(BaseModel):
-    name: Optional[str] = None
     category_id: Optional[str] = None
     type: Optional[str] = None
     file_url: Optional[str] = None
@@ -59,7 +57,6 @@ class DesignUpdate(BaseModel):
 
 class DesignOut(BaseModel):
     id: str
-    name: str
     category_id: Optional[str]
     category_name: Optional[str] = None
     type: str
