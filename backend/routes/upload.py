@@ -1,8 +1,8 @@
 import uuid
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
-from ..database import get_db
-from ..auth import get_current_user, require_owner
-from ..config import get_settings
+from database import get_db
+from auth import get_current_user, require_owner
+from config import get_settings
 
 router = APIRouter(prefix="/upload", tags=["upload"])
 MAX_SIZE_MB = 10

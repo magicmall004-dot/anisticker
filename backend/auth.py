@@ -9,8 +9,8 @@ import jwt
 from fastapi import Depends, HTTPException, Header
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from .config import get_settings
-from .database import get_db
+from config import get_settings
+from database import get_db
 
 bearer = HTTPBearer(auto_error=False)
 

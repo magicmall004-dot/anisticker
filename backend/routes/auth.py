@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException
-from ..auth import validate_init_data, create_token
-from ..config import get_settings
-from ..database import get_db
-from ..models import InitDataRequest, TokenResponse
+from auth import validate_init_data, create_token
+from config import get_settings
+from database import get_db
+from models import InitDataRequest, TokenResponse
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -62,5 +62,5 @@ async def telegram_login(body: InitDataRequest):
 async def get_me(user=None):
     # Used by frontend to refresh user info with existing token
     from fastapi import Depends
-    from ..auth import get_current_user
+    from auth import get_current_user
     return {"user": user}

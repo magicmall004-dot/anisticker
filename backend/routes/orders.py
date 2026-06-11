@@ -1,8 +1,8 @@
 import asyncio
 from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
-from ..database import get_db
-from ..auth import get_current_user, require_owner
-from ..models import OrderCreate, OrderStatusUpdate, OrderOut
+from database import get_db
+from auth import get_current_user, require_owner
+from models import OrderCreate, OrderStatusUpdate, OrderOut
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 

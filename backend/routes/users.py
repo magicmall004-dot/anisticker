@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from ..database import get_db
-from ..auth import get_current_user, require_owner
-from ..models import UserRoleUpdate, UserBanUpdate
+from database import get_db
+from auth import get_current_user, require_owner
+from models import UserRoleUpdate, UserBanUpdate
 
 router = APIRouter(prefix="/users", tags=["users"])
 

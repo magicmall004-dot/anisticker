@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
-from ..database import get_db
-from ..auth import get_current_user, require_owner
-from ..models import CategoryCreate, CategoryOut
+from database import get_db
+from auth import get_current_user, require_owner
+from models import CategoryCreate, CategoryOut
 
 router = APIRouter(prefix="/categories", tags=["categories"])
 

@@ -64,7 +64,7 @@ async def send_order_notification(order: dict, db):
     # Fetch order items with design names
     items_res = db.table("order_items").select("custom_text, designs(name)").eq("order_id", order["id"]).execute()
     item_lines = "\n".join(
-        f"  • {i['designs']['name']}" + (f" — "{i['custom_text']}"" if i.get("custom_text") else "")
+f"  • {i['designs']['name']}" + (f" \u2014 \"{i['custom_text']}\"" if i.get("custom_text") else "")
         for i in items_res.data
     ) or "  (none)"
 
