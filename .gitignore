@@ -8,3 +8,5 @@ backend/routes/*.py
 supabase/
 pm2.config.js
 ecosystem.config.js
+frontend/node_modules/
+frontend/dist/
