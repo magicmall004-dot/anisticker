@@ -7,7 +7,7 @@ import { formatPrice } from "../lib/utils";
 import { hapticNotification } from "../lib/telegram";
 
 const EMPTY = {
-  category_id:"", type:"regular",
+  category_id:"", type:"regular", tags:[],
   file_url:"", file_type:"json",
   primary_color:"#000000", secondary_color:"#ffffff",
   has_text:false, user_price:0, reseller_price:0, is_visible:true,
@@ -85,6 +85,20 @@ export default function OwnerDesigns() {
           <button className="btn btn-ghost" style={{ padding:6 }} onClick={() => setEditing(null)}>
             <X size={18} />
           </button>
+        </div>
+
+        <div className="field">
+          <div className="label">Tags (comma separated)</div>
+          <input className="input"
+            value={(editing.tags || []).join(", ")}
+            onChange={(e) => setEditing({
+              ...editing,
+              tags: e.target.value.split(",").map(t => t.trim()).filter(Boolean)
+            })}
+            placeholder="e.g. logo, colour, adaptive" />
+          <div style={{ fontSize:11, color:"var(--hint)", marginTop:4 }}>
+            Separate multiple tags with commas
+          </div>
         </div>
 
         <div className="field">

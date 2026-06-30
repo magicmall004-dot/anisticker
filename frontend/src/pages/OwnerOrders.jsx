@@ -252,9 +252,3 @@ function OrderDetail({ order, onBack, onStatus }) {
   );
 }
 
-const STATUS_ACTIONS = {
-  pending:   ["accepted", "cancelled"],
-  accepted:  ["done", "cancelled"],
-  cancelled: [],
-  done:      [],
-};
