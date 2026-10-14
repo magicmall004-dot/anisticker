@@ -893,3 +893,9 @@ html[data-gfx="balanced"] .pf-bar::after { display: none; }
 .icon-btn-press:active { transform: scale(0.88); }
 
 html[data-gfx="low"] .search-box:focus-within { box-shadow: none; transform: none; }
+
+/* ===== Desktop drag scroll ===== */
+.scroll-row { scroll-snap-type: none !important; scroll-behavior: auto !important; cursor: grab; }
+.scroll-row.dragging { cursor: grabbing; user-select: none; }
+.scroll-row.dragging * { pointer-events: none; }
+@media (pointer: coarse) { .scroll-row { cursor: auto; } }
