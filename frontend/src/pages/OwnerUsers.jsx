@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { getUsers, setUserRole, setUserBan } from "../lib/api";
-import { Shield, Ban, ChevronDown } from "lucide-react";
-import { hapticNotification } from "../lib/telegram";
+import { Shield, Ban, ChevronDown, Send } from "lucide-react";
+import { hapticNotification, openTelegramLink } from "../lib/telegram";
 
 const ROLES = ["user", "reseller", "owner"];
 
@@ -107,6 +107,12 @@ export default function OwnerUsers() {
                   {u.username && <div style={{ fontSize:12,color:"var(--hint)" }}>@{u.username}</div>}
                   <div style={{ fontSize:11,color:"var(--hint)" }}>ID: {u.id}</div>
                 </div>
+                {u.username && (
+                  <button onClick={(e) => { e.stopPropagation(); openTelegramLink(`https://t.me/${u.username}`); }}
+                    style={{ background:"var(--card)",border:"1px solid var(--border)",borderRadius:8,padding:"5px 9px",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginLeft:6 }}>
+                    <Send size={14} color="var(--accent)" />
+                  </button>
+                )}
               </div>
 
               {/* Role badge */}

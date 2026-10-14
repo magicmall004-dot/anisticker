@@ -14,7 +14,7 @@ export default function CartBar() {
 
   return (
     <div
-      className="cart-bar"
+      className="cart-bar cart-bar-enter"
       onClick={() => { haptic("medium"); navigate("/setup"); }}
     >
       <div style={{ display:"flex", alignItems:"center", gap:10 }}>

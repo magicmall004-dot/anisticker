@@ -1,10 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ChevronLeft, Upload, CheckCircle } from "lucide-react";
-import { getPaymentMethods, createOrder, uploadTransaction } from "../lib/api";
+import { ChevronLeft, Wallet, AlertCircle, Plus } from "lucide-react";
+import { createOrder, getMyBalance, getMyVouchers } from "../lib/api";
 import { useApp } from "../context/AppContext";
 import { formatPrice } from "../lib/utils";
-import { showBackButton, hideBackButton, hapticNotification } from "../lib/telegram";
+import {
+  showBackButton, hideBackButton,
+  showMainButton, hideMainButton, setMainButtonLoading,
+  hapticNotification, showConfirm
+} from "../lib/telegram";
+import AnimatedNumber from "../components/AnimatedNumber";
 
 export default function Payment() {
   const { cart, cartTotal, user, clearCart } = useApp();
@@ -12,40 +17,44 @@ export default function Payment() {
   const location  = useLocation();
   const setupData = location.state || {};
 
-  const [methods,   setMethods]   = useState([]);
-  const [selected,  setSelected]  = useState(null);
-  const [txImage,   setTxImage]   = useState(null);   // URL after upload
-  const [txFile,    setTxFile]    = useState(null);   // display name
-  const [uploading, setUploading] = useState(false);
-  const [placing,   setPlacing]   = useState(false);
-  const fileRef = useRef();
+  const [balance,    setBalance]    = useState(null);
+  const [placing,    setPlacing]    = useState(false);
+  const [loading,    setLoading]    = useState(true);
+  const [cats,       setCats]       = useState([]);
+  const [voucherIds, setVoucherIds] = useState(new Set());
 
   useEffect(() => {
     showBackButton(() => navigate(-1));
-    getPaymentMethods().then(setMethods);
-    return hideBackButton;
+    getMyBalance().then((b) => setBalance(b.balance)).finally(() => setLoading(false));
+    import("../lib/api").then(({ getCategories, getMyVouchers }) => {
+      getCategories().then(setCats).catch(() => {});
+      getMyVouchers().then(vs => setVoucherIds(new Set(vs.map(v => v.design_id)))).catch(() => {});
+    });
+    return () => { hideBackButton(); hideMainButton(); };
   }, []);
 
   if (cart.length === 0) { navigate("/"); return null; }
 
-  const total = cartTotal(user?.role);
+  const total = cartTotal(user?.role, cats, voucherIds);
+  const canPlace = balance !== null && balance >= total && !placing;
+  const insufficient = balance !== null && balance < total;
 
-  async function handleFileChange(e) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setUploading(true);
-    try {
-      const res = await uploadTransaction(file);
-      setTxImage(res.url);
-      setTxFile(file.name);
-    } finally {
-      setUploading(false);
+  useEffect(() => {
+    if (canPlace) {
+      showMainButton(`Pay with Balance · ${formatPrice(total)}`, placeOrder, "#04D9FF", "#000000");
+    } else {
+      hideMainButton();
     }
-  }
+  }, [canPlace, total]);
 
   async function placeOrder() {
-    if (!selected || !txImage) return;
+    const confirmed = await showConfirm(
+      `Confirm order for ${cart.length} design${cart.length>1?"s":""}\nTotal: ${formatPrice(total)}\n\nThis will be deducted from your wallet balance.`
+    );
+    if (!confirmed) return;
+
     setPlacing(true);
+    setMainButtonLoading(true);
     try {
       const order = await createOrder({
         items: cart.map((i) => ({
@@ -54,33 +63,39 @@ export default function Payment() {
           secondary_color: i.secondaryColor || setupData.secondaryColor,
           extra_colors:    i.extraColors    || [],
           custom_text:     i.customText     || null,
+          text_values:     i.textValues     || [],
+          is_instant:      i.design.is_instant || false,
+          instant_svg:     (i.logoMode === "text" ? null : i.instantSvg) || null,
+          instant_text:    (i.logoMode === "text" ? i.instantText : null) || null,
+          instant_colors:  i.instantColors  || {},
+          logo_slots:      i.design.logo_slots || [],
+          color_map:       i.design.color_map  || [],
         })),
-        payment_method_id:     selected.id,
-        transaction_image_url: txImage,
+        payment_method_id:     null,
+        transaction_image_url: null,
         total_price:           total,
-
-        logo_type:   setupData.logoMode,
-        logo_name:   setupData.logoName   || null,
-        logo_symbol: setupData.logoSymbol || null,
-        logo_file_url: setupData.logoUrl  || null,
-
-        add_username: setupData.addUsername || false,
-        tg_username:  setupData.tgUsername  || null,
-        primary_color:   setupData.primaryColor,
-        secondary_color: setupData.secondaryColor,
+        logo_type:    setupData.logoMode    || null,
+        logo_name:    setupData.logoName    || null,
+        logo_symbol:  setupData.logoSymbol  || null,
+        logo_file_url: setupData.logoUrl   || null,
+        add_username:  setupData.addUsername || false,
+        tg_username:   setupData.tgUsername  || null,
+        primary_color:   setupData.primaryColor   || null,
+        secondary_color: setupData.secondaryColor || null,
       });
-
       hapticNotification("success");
       clearCart();
       navigate("/order-confirm", { state: { order } });
     } catch (e) {
-      alert("Failed to place order: " + (e.response?.data?.detail || e.message));
+      hapticNotification("error");
+      const detail = e.response?.data?.detail;
+      const msg = Array.isArray(detail) ? detail.map(d => d.msg||JSON.stringify(d)).join(", ") : (detail || e.message);
+      alert("Failed: " + msg);
     } finally {
       setPlacing(false);
+      setMainButtonLoading(false);
     }
   }
-
-  const canPlace = selected && txImage && !placing && !uploading;
 
   return (
     <div className="page">
@@ -92,108 +107,65 @@ export default function Payment() {
       </div>
 
       <div className="page-body">
-
         {/* Order summary */}
-        <div className="card" style={{ background:"rgba(124,58,237,.12)", border:"1px solid rgba(124,58,237,.25)" }}>
+        <div className="card-glow">
           <div className="row-between">
-            <div style={{ color:"var(--hint)", fontSize:13 }}>Designs</div>
-            <div style={{ fontWeight:600 }}>{cart.length}</div>
+            <div style={{ color:"var(--hint)", fontSize:13 }}>Designs selected</div>
+            <div style={{ fontWeight:700 }}>{cart.length}</div>
           </div>
-          <div className="divider" style={{ margin:"8px 0" }} />
+          {cart.every(i => i.design.is_instant) && (
+            <div style={{ marginTop:8,padding:"6px 10px",borderRadius:8,background:"rgba(34,197,94,0.1)",border:"1px solid rgba(34,197,94,0.2)",fontSize:12,color:"var(--success)",textAlign:"center" }}>
+              ⚡ Instant Design — Auto-delivered immediately after payment!
+            </div>
+          )}
+          <div className="divider" style={{ margin:"8px 0" }}/>
           <div className="row-between">
-            <div style={{ fontWeight:700 }}>Total</div>
-            <div style={{ fontWeight:700, fontSize:18, color:"var(--accent2)" }}>{formatPrice(total)}</div>
+            <div style={{ fontWeight:700, fontSize:16 }}>Total</div>
+            <div style={{ fontWeight:800, fontSize:20 }} className="glow-text">
+              {formatPrice(total)}
+            </div>
           </div>
         </div>
 
-        {/* Payment method selection */}
-        <div className="section-title">Choose Payment Method</div>
-
-        {methods.length === 0 ? (
-          <div className="card" style={{ color:"var(--hint)", textAlign:"center", padding:"24px 16px" }}>
-            No payment methods available yet
-          </div>
+        {/* Wallet balance */}
+        <div className="section-title">Wallet Balance</div>
+        {loading ? (
+          <div style={{ display:"flex", justifyContent:"center", padding:24 }}><div className="spinner"/></div>
         ) : (
-          methods.map((m) => (
-            <div
-              key={m.id}
-              className="card"
-              onClick={() => setSelected(m)}
-              style={{
-                cursor:"pointer",
-                border:`2px solid ${selected?.id === m.id ? "var(--btn)" : "rgba(255,255,255,0.05)"}`,
-                transition:"border-color .15s",
-              }}
-            >
-              <div className="row-between">
-                <div className="row" style={{ gap:12 }}>
-                  {m.logo_url && (
-                    <img src={m.logo_url} alt={m.name}
-                      style={{ width:40, height:40, objectFit:"contain", borderRadius:8 }} />
-                  )}
-                  <div>
-                    <div style={{ fontWeight:600 }}>{m.name}</div>
-                    {m.account_name && (
-                      <div style={{ fontSize:12, color:"var(--hint)" }}>{m.account_name}</div>
-                    )}
-                    {m.account_number && (
-                      <div style={{ fontSize:13, fontFamily:"monospace", fontWeight:600, marginTop:2 }}>
-                        {m.account_number}
-                      </div>
-                    )}
+          <div className="card" style={{ border: insufficient ? "1px solid rgba(239,68,68,0.3)" : "1px solid rgba(4,217,255,0.2)" }}>
+            <div className="row-between">
+              <div className="row" style={{ gap:10 }}>
+                <Wallet size={22} color={insufficient ? "var(--danger)" : "var(--accent)"} />
+                <div>
+                  <div style={{ fontSize:11, color:"var(--hint)" }}>Available Balance</div>
+                  <div style={{ fontSize:20, fontWeight:800, color: insufficient ? "var(--danger)" : "var(--text)" }}>
+                    <AnimatedNumber value={balance||0} format={formatPrice} />
                   </div>
                 </div>
-                {selected?.id === m.id && (
-                  <CheckCircle size={22} color="var(--btn)" />
-                )}
               </div>
             </div>
-          ))
-        )}
 
-        {/* Upload transaction */}
-        <div className="section-title">Upload Payment Screenshot</div>
-
-        <input ref={fileRef} type="file" accept="image/*"
-          style={{ display:"none" }} onChange={handleFileChange} />
-
-        {!txImage ? (
-          <button
-            className="btn btn-secondary btn-full"
-            disabled={uploading}
-            onClick={() => fileRef.current?.click()}
-            style={{ padding:"20px 16px", flexDirection:"column", gap:8 }}
-          >
-            <Upload size={24} />
-            <span>{uploading ? "Uploading…" : "Tap to upload transaction screenshot"}</span>
-          </button>
-        ) : (
-          <div className="card">
-            <div className="row" style={{ gap:12 }}>
-              <img src={txImage} alt="transaction"
-                style={{ width:64, height:64, objectFit:"cover", borderRadius:8 }} />
-              <div style={{ flex:1 }}>
-                <div style={{ fontWeight:600, fontSize:13 }}>{txFile}</div>
-                <div style={{ fontSize:12, color:"var(--success)", marginTop:2 }}>✓ Uploaded</div>
-                <button className="btn btn-ghost" style={{ padding:"4px 0", fontSize:12 }}
-                  onClick={() => fileRef.current?.click()}>
-                  Change screenshot
+            {insufficient && (
+              <>
+                <div className="divider" style={{ margin:"12px 0" }}/>
+                <div className="row" style={{ gap:8, color:"var(--danger)", fontSize:13, marginBottom:12 }}>
+                  <AlertCircle size={16} />
+                  <span>You need {formatPrice(total - balance)} more to place this order.</span>
+                </div>
+                <button className="btn btn-primary btn-full" onClick={() => navigate("/wallet")}>
+                  <Plus size={16} /> Top Up Balance
                 </button>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         )}
 
-        {/* Place order */}
-        <button
-          className="btn btn-primary btn-full"
-          disabled={!canPlace}
-          onClick={placeOrder}
-          style={{ marginTop:8, padding:"16px" }}
-        >
-          {placing ? "Placing Order…" : "Confirm Order →"}
-        </button>
-
+        {/* Fallback button - only show if no Telegram MainButton support */}
+        {canPlace && !window.Telegram?.WebApp && (
+          <button className="btn btn-primary btn-full" disabled={placing} onClick={placeOrder} style={{ padding:16 }}>
+            {placing ? "Placing Order…" : `Pay with Balance · ${formatPrice(total)}`}
+          </button>
+        )}
       </div>
     </div>
   );

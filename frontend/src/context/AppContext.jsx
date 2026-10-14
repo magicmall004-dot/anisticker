@@ -9,6 +9,19 @@ export function AppProvider({ children }) {
   const [authReady, setAuthReady] = useState(false);
   const [cart,      setCart]      = useState([]);  // [{design, primaryColor, secondaryColor, extraColors, customText}]
 
+  // ── Apply saved theme palette, if any ──────────────────────
+  useEffect(() => {
+    const saved = localStorage.getItem("ani_theme");
+    if (saved) {
+      try {
+        const t = JSON.parse(saved);
+        if (t.accent) document.documentElement.style.setProperty("--accent", t.accent);
+        if (t.price)  document.documentElement.style.setProperty("--price", t.price);
+        if (t.pink)   document.documentElement.style.setProperty("--pink", t.pink);
+      } catch (e) {}
+    }
+  }, []);
+
   // ── Boot: validate Telegram initData → JWT ────────────────
   useEffect(() => {
     tgReady();
@@ -41,25 +54,25 @@ export function AppProvider({ children }) {
 
   // ── Cart helpers ──────────────────────────────────────────
   const addToCart = useCallback((design) => {
-    setCart((prev) => {
-      if (prev.find((i) => i.design.id === design.id)) return prev;
-      return [...prev, {
-        design,
-        primaryColor:   design.primary_color   || "#000000",
-        secondaryColor: design.secondary_color || "#ffffff",
-        extraColors: [],
-        customText: "",
-      }];
-    });
+    const cartItemId = `${design.id}_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+    setCart((prev) => [...prev, {
+      cartItemId,
+      design,
+      primaryColor:   design.primary_color   || "#000000",
+      secondaryColor: design.secondary_color || "#ffffff",
+      extraColors: [...(design.extra_colors||[])],
+      customText: "",
+      textValues: [],
+    }]);
   }, []);
 
-  const removeFromCart = useCallback((designId) => {
-    setCart((prev) => prev.filter((i) => i.design.id !== designId));
+  const removeFromCart = useCallback((cartItemId) => {
+    setCart((prev) => prev.filter((i) => i.cartItemId !== cartItemId));
   }, []);
 
-  const updateCartItem = useCallback((designId, patch) => {
+  const updateCartItem = useCallback((cartItemId, patch) => {
     setCart((prev) =>
-      prev.map((i) => i.design.id === designId ? { ...i, ...patch } : i)
+      prev.map((i) => i.cartItemId === cartItemId ? { ...i, ...patch } : i)
     );
   }, []);
 
@@ -69,12 +82,13 @@ export function AppProvider({ children }) {
     cart.reduce((sum, i) => sum + (role === "reseller" ? i.design.reseller_price : i.design.user_price), 0);
 
   const isInCart = (designId) => cart.some((i) => i.design.id === designId);
+  const countInCart = (designId) => cart.filter((i) => i.design.id === designId).length;
 
   return (
     <AppContext.Provider value={{
       user, setUser, authReady,
       cart, addToCart, removeFromCart, updateCartItem, clearCart,
-      cartTotal, isInCart,
+      cartTotal, isInCart, countInCart,
     }}>
       {children}
     </AppContext.Provider>

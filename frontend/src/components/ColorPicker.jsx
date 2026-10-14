@@ -53,7 +53,7 @@ export default function ColorPicker({ value = "#000000", onChange, label }) {
 
       {/* Swatch + hex input */}
       <div className="row">
-        <div className="color-swatch" style={{ background: previewBg, width:36, height:36 }} />
+        <div style={{ background: previewBg, width:36, height:36, borderRadius:"50%", flexShrink:0, border:"2px solid var(--border)", boxShadow:"0 0 8px rgba(0,0,0,0.3)" }} />
         <input
           className="input"
           value={hex}
