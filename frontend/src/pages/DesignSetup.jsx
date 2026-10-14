@@ -109,14 +109,14 @@ export default function DesignSetup() {
         </button>
       </div>
 
-      <div className="page-body">
+      <div className="page-body ds-auto">
         {/* Only show logo/brand setup for non-instant designs */}
         {!allInstant && (
           <>
             {/* Logo mode */}
             <div className="card">
               <div style={{ fontWeight:700, marginBottom:12 }}>Logo Setup</div>
-              <div className="row" style={{ gap:8, marginBottom:12 }}>
+              <div className="row ds-modes" style={{ gap:8, marginBottom:12 }}>
                 {[["new","Create New"],["existing","Import Logo"]].map(([m,label]) => (
                   <button key={m} onClick={() => setLogoMode(m)}
                     className={`btn ${logoMode===m?"btn-primary":"btn-secondary"} btn-full`}
@@ -127,7 +127,7 @@ export default function DesignSetup() {
               </div>
 
               {logoMode === "new" && (
-                <div style={{ display:"flex", flexDirection:"column", gap:10 }}>
+                <div className="ds-fade" style={{ display:"flex", flexDirection:"column", gap:10 }}>
                   <div className="field">
                     <div className="label">Brand Name</div>
                     <input className="input" value={logoName} onChange={e=>setLogoName(e.target.value)} placeholder="e.g. MagicMall"/>
