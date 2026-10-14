@@ -57,9 +57,9 @@ export default function WalletPage() {
         </button>
         <div className="page-title">My Wallet</div>
       </div>
-      <div className="page-body">
+      <div className="page-body wl-auto">
         <div className="card-glow" style={{ textAlign:"center", padding:"28px 16px" }}>
-          <Wallet size={28} color="var(--accent)" style={{ marginBottom:8 }} />
+          <div className="wl-icon"><Wallet size={28} color="var(--accent)" style={{ marginBottom:8 }} /></div>
           <div style={{ fontSize:12, color:"var(--hint)", marginBottom:4 }}>Current Balance</div>
           <div style={{ fontSize:32, fontWeight:800 }} className="glow-text">
             {loading ? "…" : <AnimatedNumber value={balance} format={formatPrice} />}
@@ -93,7 +93,7 @@ export default function WalletPage() {
           <div style={{ display:"flex", justifyContent:"center", padding:24 }}><div className="spinner" /></div>
         ) : history.length === 0 ? (
           <div className="empty-state" style={{ padding:"24px 0" }}>No transactions yet</div>
-        ) : history.map((tx) => <TxRow key={tx.id} tx={tx} />)}
+        ) : history.map((tx, i) => <div key={tx.id} className="wl-tx" style={{ "--i": Math.min(i, 12) }}><TxRow tx={tx} /></div>)}
       </div>
     </div>
   );

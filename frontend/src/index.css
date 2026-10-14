@@ -1004,3 +1004,21 @@ html[data-gfx="balanced"] .op-dot-active { animation: none; }
 html[data-gfx="low"] .pay-short,
 html[data-gfx="balanced"] .pay-short { animation: payShake 0.5s ease 0.3s both; }
 html[data-gfx="low"] .pay-short { animation: none; }
+
+/* ===== Wallet polish ===== */
+.wl-auto > * { animation: pageEnter var(--dur-slow) var(--ease-out) both; }
+.wl-auto > *:nth-child(2) { animation-delay: 70ms; }
+.wl-auto > *:nth-child(3) { animation-delay: 140ms; }
+.wl-auto > *:nth-child(n+4) { animation-delay: 210ms; }
+
+.wl-icon { display: inline-flex; filter: drop-shadow(0 0 12px rgba(4,217,255,0.55)); animation: obFloat 4s ease-in-out infinite; }
+.wl-tx { animation: pageEnter var(--dur-slow) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 45ms + 250ms); }
+
+/* Redeem + top-up inputs: glow on focus */
+.input { transition: border-color var(--dur-med) ease, box-shadow var(--dur-med) ease; }
+.input:focus { border-color: rgba(4,217,255,0.6); box-shadow: 0 0 0 3px rgba(4,217,255,0.12); outline: none; }
+
+/* Payment method cards: springy press */
+.card[style*="cursor: pointer"]:active, .card[style*="cursor:pointer"]:active { transform: scale(0.98); }
+
+html[data-gfx="low"] .wl-icon { animation: none; }
