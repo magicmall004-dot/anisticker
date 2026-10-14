@@ -1071,3 +1071,11 @@ html[data-gfx="balanced"] .gv-me { animation: pageEnter var(--dur-slow) var(--ea
 .mo-pill:active { transform: scale(0.92); }
 .mo-pill.on { animation: pillPop 0.4s var(--ease-spring) both; }
 html[data-gfx="low"] .mo-pending, html[data-gfx="balanced"] .mo-pending { animation: opGrow 0.7s var(--ease-out) both; }
+
+/* ===== Owner panel polish ===== */
+.od-content { animation: pageEnter var(--dur-med) var(--ease-out) both; }
+.od-tab { transition: transform var(--dur-fast) var(--ease-spring), background var(--dur-med) ease, color var(--dur-med) ease, box-shadow var(--dur-med) ease !important; -webkit-tap-highlight-color: transparent; }
+.od-tab:active { transform: scale(0.92); }
+.od-tab-on { animation: pillPop 0.4s var(--ease-spring) both; }
+.od-tab svg { transition: transform 0.35s var(--ease-spring); }
+.od-tab-on svg { transform: scale(1.2) rotate(-6deg); }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, Package, Layers, CreditCard, Users, Settings, Wallet, Sparkles, Gift, TrendingUp, Send, Type, Tag } from "lucide-react";
 import { useApp } from "../context/AppContext";
@@ -40,6 +40,11 @@ export default function OwnerDashboard() {
   const { user } = useApp();
   const navigate = useNavigate();
   const [tab, setTab] = useState("orders");
+  const rowRef = useRef(null);
+  useEffect(() => {
+    const el = rowRef.current && rowRef.current.querySelector(".od-tab-on");
+    if (el && el.scrollIntoView) el.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" });
+  }, [tab]);
 
   if (user?.role !== "owner") { navigate("/"); return null; }
 
@@ -53,14 +58,14 @@ export default function OwnerDashboard() {
       </div>
 
       {/* Horizontal scrollable tab row */}
-      <div style={{
+      <div ref={rowRef} className="od-tabs" style={{
         overflowX:"auto", display:"flex", gap:6, padding:"8px 16px",
         scrollbarWidth:"none", borderBottom:"1px solid rgba(255,255,255,0.06)",
         position:"sticky", top:52, zIndex:40,
         background:"rgba(8,8,12,0.92)", backdropFilter:"blur(20px)",
       }}>
         {TABS.map(({ id, label, Icon }) => (
-          <button key={id} onClick={() => setTab(id)} style={{
+          <button key={id} className={`od-tab ${tab===id?"od-tab-on":""}`} onClick={() => setTab(id)} style={{
             display:"flex", alignItems:"center", gap:5,
             padding:"7px 14px", borderRadius:99, border:"none",
             cursor:"pointer", whiteSpace:"nowrap", fontSize:12, fontWeight:700,
@@ -76,7 +81,7 @@ export default function OwnerDashboard() {
         ))}
       </div>
 
-      <div>
+      <div key={tab} className="od-content">
         {tab === "orders"   && <OwnerOrders />}
         {tab === "designs"  && <OwnerDesigns />}
         {tab === "payments" && <OwnerPayments />}
