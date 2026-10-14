@@ -1042,3 +1042,21 @@ html[data-gfx="low"] .wl-icon { animation: none; }
 .toggle input:checked ~ .toggle-track { box-shadow: 0 0 12px rgba(4,217,255,0.45); }
 
 html[data-gfx="low"] .ds-modes .btn-primary { box-shadow: none; }
+
+/* ===== Giveaway polish ===== */
+.gv-auto > * { animation: pageEnter var(--dur-slow) var(--ease-out) both; }
+.gv-auto > *:nth-child(2) { animation-delay: 70ms; }
+.gv-auto > *:nth-child(3) { animation-delay: 140ms; }
+.gv-auto > *:nth-child(4) { animation-delay: 210ms; }
+.gv-auto > *:nth-child(n+5) { animation-delay: 280ms; }
+
+.gv-float { display: inline-flex; filter: drop-shadow(0 0 16px rgba(167,139,250,0.6)); animation: obFloat 3.5s ease-in-out infinite; }
+.gv-tick { animation: gvTick 0.35s var(--ease-spring) both; text-shadow: 0 0 12px rgba(167,139,250,0.5); }
+@keyframes gvTick { from { transform: translateY(-8px) scale(0.85); opacity: 0.2; } to { transform: none; opacity: 1; } }
+
+.gv-winner { animation: pageEnter var(--dur-slow) var(--ease-out) both; animation-delay: calc(var(--i, 0) * 70ms + 200ms); }
+.gv-me { animation: pageEnter var(--dur-slow) var(--ease-out) 0.2s both, gvGold 2.4s ease-in-out 0.8s infinite; }
+@keyframes gvGold { 0%,100% { box-shadow: 0 0 8px rgba(255,215,0,0.25); } 50% { box-shadow: 0 0 24px rgba(255,215,0,0.6); } }
+
+html[data-gfx="low"] .gv-float, html[data-gfx="low"] .gv-me { animation: none; }
+html[data-gfx="balanced"] .gv-me { animation: pageEnter var(--dur-slow) var(--ease-out) 0.2s both; }

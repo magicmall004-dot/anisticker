@@ -21,7 +21,7 @@ function getTimeParts(endAt) {
 function TimeBox({ value, label }) {
   return (
     <div style={{ background:"var(--card)",borderRadius:10,padding:"10px 4px",textAlign:"center",minWidth:54,border:"1px solid rgba(124,58,237,0.2)" }}>
-      <div style={{ fontSize:22,fontWeight:800,color:"#a78bfa",fontVariantNumeric:"tabular-nums" }}>{String(value).padStart(2,"0")}</div>
+      <div key={value} className="gv-tick" style={{ fontSize:22,fontWeight:800,color:"#a78bfa",fontVariantNumeric:"tabular-nums" }}>{String(value).padStart(2,"0")}</div>
       <div style={{ fontSize:9,color:"var(--hint)",textTransform:"uppercase",letterSpacing:".05em" }}>{label}</div>
     </div>
   );
@@ -84,11 +84,11 @@ export default function GiveawayPage() {
         <button className="btn btn-ghost" style={{ padding:6 }} onClick={() => navigate(-1)}><ChevronLeft size={22}/></button>
         <div className="page-title"><Gift size={16} style={{display:"inline",verticalAlign:"-3px"}}/> Giveaway</div>
       </div>
-      <div className="page-body">
+      <div className="page-body gv-auto">
         <div className="card-glow" style={{ textAlign:"center",padding:"24px 16px" }}>
           {giveaway.tgs_url
             ? <AnimationPreview url={giveaway.tgs_url} fileType={giveaway.tgs_url.endsWith("tgs")?"tgs":"json"} size="100px" autoplay loop />
-            : <Gift size={64} color="#a78bfa" />}
+            : <span className="gv-float"><Gift size={64} color="#a78bfa" /></span>}
           <div style={{ fontWeight:800,fontSize:18,marginTop:10 }}>{giveaway.title}</div>
           {giveaway.description && <div style={{ fontSize:13,color:"var(--hint)",marginTop:6,lineHeight:1.6 }}>{giveaway.description}</div>}
         </div>
@@ -146,7 +146,7 @@ export default function GiveawayPage() {
           <>
             <div className="section-title"><Trophy size={16} style={{display:"inline",verticalAlign:"-3px"}}/> Winners</div>
             {giveaway.winners_display.map((w,idx) => (
-              <div key={idx} className="card" style={{ border:w.is_me?"1px solid #FFD700":"1px solid rgba(255,255,255,0.07)",background:w.is_me?"rgba(255,215,0,0.06)":undefined }}>
+              <div key={idx} className={`card gv-winner ${w.is_me ? "gv-me" : ""}`} style={{ "--i": Math.min(idx, 10), border:w.is_me?"1px solid #FFD700":"1px solid rgba(255,255,255,0.07)",background:w.is_me?"rgba(255,215,0,0.06)":undefined }}>
                 <div className="row" style={{ gap:10 }}>
                   {w.photo_url ? <img src={w.photo_url} alt="" style={{ width:36,height:36,borderRadius:"50%",objectFit:"cover" }}/> : <div style={{ width:36,height:36,borderRadius:"50%",background:"var(--card)",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700 }}>{(w.first_name||"?")[0]}</div>}
                   <div style={{ flex:1 }}>
