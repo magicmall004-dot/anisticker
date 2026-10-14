@@ -859,3 +859,13 @@ html[data-gfx="low"] .pf-auto > .card-glow:first-child > img,
 html[data-gfx="low"] .pf-auto > .card-glow:first-child > div:first-child,
 html[data-gfx="low"] .pf-bar::after { animation: none !important; }
 html[data-gfx="balanced"] .pf-bar::after { display: none; }
+
+/* ===== Leaderboard tabs ===== */
+.lb-tabs { position:relative; display:flex; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:14px; padding:4px; margin-bottom:10px; }
+.lb-tab-pill { position:absolute; top:4px; bottom:4px; left:4px; width:calc((100% - 8px) / 3); border-radius:10px; background:linear-gradient(135deg, rgba(4,217,255,0.25), rgba(124,58,237,0.25)); border:1px solid rgba(4,217,255,0.35); box-shadow:0 0 14px rgba(4,217,255,0.25); transition:transform 0.4s var(--ease-spring); }
+.lb-tab { position:relative; z-index:1; flex:1; background:none; border:none; color:var(--hint); font-size:13px; font-weight:700; padding:9px 0; cursor:pointer; transition:color var(--dur-med) ease; -webkit-tap-highlight-color:transparent; }
+.lb-tab.active { color:var(--text); }
+.lb-meta { display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:6px; font-size:11px; color:var(--hint); }
+.lb-reset { display:inline-flex; align-items:center; gap:4px; }
+.lb-mychip { padding:3px 10px; border-radius:99px; background:rgba(4,217,255,0.12); color:var(--accent); font-weight:700; border:1px solid rgba(4,217,255,0.25); }
+.lb-mine { border:1px solid rgba(4,217,255,0.5) !important; background:rgba(4,217,255,0.08) !important; box-shadow:0 0 16px rgba(4,217,255,0.2); }
