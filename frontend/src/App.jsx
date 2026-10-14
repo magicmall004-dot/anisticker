@@ -153,7 +153,7 @@ function AppRoutes() {
 export default function App() {
   useEffect(() => { tgReady(); }, []);
   return (
-    <BrowserRouter basename="/anisticker">
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "")}>
       <AppProvider>
         <EmojiProvider>
           <GraphicsProvider>
