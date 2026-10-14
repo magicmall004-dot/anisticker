@@ -313,9 +313,9 @@ export default function MyOrders() {
       </div>
 
       {/* Filter tabs */}
-      <div style={{ padding:"8px 16px",display:"flex",gap:6,overflowX:"auto",scrollbarWidth:"none" }}>
+      <div className="mo-filters" style={{ padding:"8px 16px",display:"flex",gap:6,overflowX:"auto",scrollbarWidth:"none" }}>
         {["all","pending","accepted","done","cancelled"].map(f => (
-          <button key={f} onClick={() => setFilter(f)} style={{
+          <button key={f} className={`mo-pill ${filter===f?"on":""}`} onClick={() => setFilter(f)} style={{
             padding:"6px 14px",borderRadius:99,fontSize:12,fontWeight:700,border:"none",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,
             background:filter===f?"rgba(4,217,255,0.15)":"rgba(255,255,255,0.06)",
             color:filter===f?"var(--accent)":"var(--hint)",
@@ -339,13 +339,13 @@ export default function MyOrders() {
             <Package size={40}/>
             <div style={{ fontWeight:600 }}>{filter==="all"?"No orders yet":`No ${filter} orders`}</div>
           </div>
-        ) : filtered.map(order => {
+        ) : filtered.map((order, oi) => {
           const cfg = statusConfig(order.status);
           const Icon = cfg.icon;
           return (
-            <div key={order.id} className="card" onClick={() => setDetail(order)} style={{ cursor:"pointer",padding:0,overflow:"hidden" }}>
+            <div key={order.id} className="card mo-card" onClick={() => setDetail(order)} style={{ "--i": Math.min(oi, 12), cursor:"pointer",padding:0,overflow:"hidden" }}>
               {/* Status bar */}
-              <div style={{ height:3,background:cfg.color,opacity:0.7 }}/>
+              <div className={`mo-bar ${order.status==="pending"?"mo-pending":""}`} style={{ height:3,background:cfg.color,opacity:0.7 }}/>
               <div style={{ padding:"12px 14px" }}>
                 <div className="row-between" style={{ marginBottom:8 }}>
                   <div className="row" style={{ gap:8 }}>

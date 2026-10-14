@@ -1060,3 +1060,14 @@ html[data-gfx="low"] .ds-modes .btn-primary { box-shadow: none; }
 
 html[data-gfx="low"] .gv-float, html[data-gfx="low"] .gv-me { animation: none; }
 html[data-gfx="balanced"] .gv-me { animation: pageEnter var(--dur-slow) var(--ease-out) 0.2s both; }
+
+/* ===== Orders list polish ===== */
+.mo-card { animation: pageEnter var(--dur-slow) var(--ease-out) backwards; animation-delay: calc(var(--i, 0) * 55ms); transition: transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur-med) ease; }
+.mo-card:active { transform: scale(0.975); }
+.mo-bar { transform-origin: left center; animation: opGrow 0.7s var(--ease-out) both; }
+.mo-pending { animation: opGrow 0.7s var(--ease-out) both, moPulse 1.8s ease-in-out 0.7s infinite; }
+@keyframes moPulse { 0%,100% { opacity: 0.45; } 50% { opacity: 1; } }
+.mo-pill { transition: transform var(--dur-fast) var(--ease-spring), background var(--dur-med) ease, color var(--dur-med) ease, box-shadow var(--dur-med) ease; -webkit-tap-highlight-color: transparent; }
+.mo-pill:active { transform: scale(0.92); }
+.mo-pill.on { animation: pillPop 0.4s var(--ease-spring) both; }
+html[data-gfx="low"] .mo-pending, html[data-gfx="balanced"] .mo-pending { animation: opGrow 0.7s var(--ease-out) both; }
