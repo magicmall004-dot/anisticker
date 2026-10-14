@@ -106,7 +106,7 @@ export default function Payment() {
         <div className="page-title">Payment</div>
       </div>
 
-      <div className="page-body">
+      <div className="page-body pay-auto">
         {/* Order summary */}
         <div className="card-glow">
           <div className="row-between">
@@ -122,7 +122,7 @@ export default function Payment() {
           <div className="row-between">
             <div style={{ fontWeight:700, fontSize:16 }}>Total</div>
             <div style={{ fontWeight:800, fontSize:20 }} className="glow-text">
-              {formatPrice(total)}
+              <AnimatedNumber value={total} format={formatPrice} />
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function Payment() {
         {loading ? (
           <div style={{ display:"flex", justifyContent:"center", padding:24 }}><div className="spinner"/></div>
         ) : (
-          <div className="card" style={{ border: insufficient ? "1px solid rgba(239,68,68,0.3)" : "1px solid rgba(4,217,255,0.2)" }}>
+          <div className={`card ${insufficient ? "pay-short" : ""}`} style={{ border: insufficient ? "1px solid rgba(239,68,68,0.3)" : "1px solid rgba(4,217,255,0.2)" }}>
             <div className="row-between">
               <div className="row" style={{ gap:10 }}>
                 <Wallet size={22} color={insufficient ? "var(--danger)" : "var(--accent)"} />

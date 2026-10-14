@@ -989,3 +989,18 @@ html[data-gfx="low"] .design-card > button { backdrop-filter: none; -webkit-back
 html[data-gfx="low"] .oc-confetti,
 html[data-gfx="low"] .oc-ring { display: none; }
 html[data-gfx="balanced"] .op-dot-active { animation: none; }
+
+/* ===== Payment polish ===== */
+.pay-auto > * { animation: pageEnter var(--dur-slow) var(--ease-out) both; }
+.pay-auto > *:nth-child(2) { animation-delay: 70ms; }
+.pay-auto > *:nth-child(3) { animation-delay: 140ms; }
+.pay-auto > *:nth-child(4) { animation-delay: 210ms; }
+.pay-auto > *:nth-child(n+5) { animation-delay: 280ms; }
+
+.pay-short { animation: payShake 0.5s ease 0.3s both, payWarn 2.4s ease-in-out 0.8s infinite; }
+@keyframes payShake { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-7px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
+@keyframes payWarn { 0%,100% { box-shadow: 0 0 0 rgba(239,68,68,0); } 50% { box-shadow: 0 0 18px rgba(239,68,68,0.3); } }
+
+html[data-gfx="low"] .pay-short,
+html[data-gfx="balanced"] .pay-short { animation: payShake 0.5s ease 0.3s both; }
+html[data-gfx="low"] .pay-short { animation: none; }
