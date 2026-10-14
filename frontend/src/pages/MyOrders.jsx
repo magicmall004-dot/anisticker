@@ -50,10 +50,10 @@ function OrderProgress({ status }) {
         return (
           <div key={step} style={{ display:"flex",alignItems:"center" }}>
             {idx > 0 && (
-              <div style={{ width:40,height:2,background:done?"var(--accent)":"rgba(255,255,255,0.1)",transition:"background 0.4s",marginBottom:18 }}/>
+              <div className={`op-line ${done?"on":""}`} style={{ width:40,height:2,background:done?"var(--accent)":"rgba(255,255,255,0.1)",transition:"background 0.4s",marginBottom:18 }}/>
             )}
             <div style={{ display:"flex",flexDirection:"column",alignItems:"center",gap:5 }}>
-              <div style={{
+              <div className={active?"op-dot-active":""} style={{
                 width:28,height:28,borderRadius:"50%",
                 background:done?cfg.color:"rgba(255,255,255,0.08)",
                 display:"flex",alignItems:"center",justifyContent:"center",

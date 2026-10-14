@@ -963,3 +963,29 @@ html[data-gfx="low"] .design-card > button { backdrop-filter: none; -webkit-back
   *::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.18); border-radius: 99px; }
   *::-webkit-scrollbar-track { background: transparent; }
 }
+
+/* ===== Order confirm polish ===== */
+.oc-page { position: relative; overflow: hidden; }
+.oc-badge { position:relative; width:84px; height:84px; border-radius:50%; background:rgba(34,197,94,0.15); border:2px solid var(--success); display:flex; align-items:center; justify-content:center; animation: ocPop 0.6s var(--ease-spring) both; box-shadow: 0 0 28px rgba(34,197,94,0.35); }
+.oc-ring { position:absolute; inset:-2px; border-radius:50%; border:2px solid rgba(34,197,94,0.5); animation: ocRing 2.2s ease-out infinite; }
+.oc-ring-2 { animation-delay: 1.1s; }
+.oc-check { stroke-dasharray: 40; stroke-dashoffset: 40; animation: ocDraw 0.5s var(--ease-out) 0.45s forwards; }
+.oc-title { font-size:24px; font-weight:800; margin-bottom:6px; background:linear-gradient(135deg,#22c55e,#04D9FF); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+.oc-rise { animation: pageEnter 0.55s var(--ease-out) var(--d, 0s) both; }
+.oc-confetti { position:absolute; inset:0; pointer-events:none; overflow:hidden; z-index:0; }
+.oc-confetti span { position:absolute; top:-20px; border-radius:2px; opacity:0; animation: ocFall linear both; }
+@keyframes ocPop { 0% { transform:scale(0); } 70% { transform:scale(1.12); } 100% { transform:scale(1); } }
+@keyframes ocRing { 0% { transform:scale(1); opacity:0.8; } 100% { transform:scale(1.9); opacity:0; } }
+@keyframes ocDraw { to { stroke-dashoffset: 0; } }
+@keyframes ocFall { 0% { opacity:1; translate:0 0; } 100% { opacity:0; translate:30px 105vh; } }
+
+/* MyOrders progress */
+.op-line { transform-origin: left center; }
+.op-line.on { animation: opGrow 0.5s var(--ease-out) both; }
+.op-dot-active { animation: opPulse 2s ease-in-out infinite; }
+@keyframes opGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes opPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+
+html[data-gfx="low"] .oc-confetti,
+html[data-gfx="low"] .oc-ring { display: none; }
+html[data-gfx="balanced"] .op-dot-active { animation: none; }
