@@ -869,3 +869,27 @@ html[data-gfx="balanced"] .pf-bar::after { display: none; }
 .lb-reset { display:inline-flex; align-items:center; gap:4px; }
 .lb-mychip { padding:3px 10px; border-radius:99px; background:rgba(4,217,255,0.12); color:var(--accent); font-weight:700; border:1px solid rgba(4,217,255,0.25); }
 .lb-mine { border:1px solid rgba(4,217,255,0.5) !important; background:rgba(4,217,255,0.08) !important; box-shadow:0 0 16px rgba(4,217,255,0.2); }
+
+/* ===== Design list polish ===== */
+@keyframes dropIn { from { opacity:0; transform:translateY(-14px); } to { opacity:1; transform:none; } }
+@keyframes pillPop { 0% { transform:scale(0.88); } 60% { transform:scale(1.07); } 100% { transform:scale(1); } }
+@keyframes countPop { 0% { transform:scale(0.4); opacity:0; } 60% { transform:scale(1.35); } 100% { transform:scale(1); opacity:1; } }
+
+.page-header-premium { animation: dropIn var(--dur-slow) var(--ease-out) both; }
+.user-banner-v2 { animation: pageEnter var(--dur-slow) var(--ease-out) 80ms both; }
+.balance-pill { transition: transform var(--dur-fast) var(--ease-spring); }
+.balance-pill:active { transform: scale(0.94); }
+
+.search-box { transition: border-color var(--dur-med) ease, box-shadow var(--dur-med) ease, transform var(--dur-med) var(--ease-spring); }
+.search-box:focus-within { border-color: rgba(4,217,255,0.55) !important; box-shadow: 0 0 0 3px rgba(4,217,255,0.12), 0 0 18px rgba(4,217,255,0.2); transform: translateY(-1px); }
+
+.scroll-row { scroll-behavior: smooth; scroll-snap-type: x proximity; }
+.pill-v2 { transition: transform var(--dur-fast) var(--ease-spring), box-shadow var(--dur-med) ease, background var(--dur-med) ease, color var(--dur-med) ease, border-color var(--dur-med) ease; -webkit-tap-highlight-color: transparent; scroll-snap-align: start; }
+.pill-v2:active { transform: scale(0.92); }
+.pill-v2.active { animation: pillPop 0.4s var(--ease-spring) both; box-shadow: 0 0 14px rgba(4,217,255,0.35); }
+
+.cart-count-pop { animation: countPop 0.4s var(--ease-spring) both; }
+.icon-btn-press { transition: transform var(--dur-fast) var(--ease-spring); }
+.icon-btn-press:active { transform: scale(0.88); }
+
+html[data-gfx="low"] .search-box:focus-within { box-shadow: none; transform: none; }

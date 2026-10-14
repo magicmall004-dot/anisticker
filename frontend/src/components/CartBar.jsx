@@ -22,7 +22,7 @@ export default function CartBar() {
           background:"rgba(255,255,255,.2)", borderRadius:99,
           padding:"2px 10px", fontWeight:700, fontSize:14,
         }}>
-          {cart.length}
+          <span key={cart.length} className="cart-count-pop" style={{display:"inline-block"}}>{cart.length}</span>
         </div>
         <span style={{ fontWeight:600 }}>
           {cart.length === 1 ? "1 design selected" : `${cart.length} designs selected`}

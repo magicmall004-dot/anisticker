@@ -27,6 +27,34 @@ function tintLottieColors(node, rgba) {
   }
 }
 
+const RAW_CACHE = new Map();
+function loadRaw(url, fileType) {
+  if (!RAW_CACHE.has(url)) {
+    if (RAW_CACHE.size >= 60) RAW_CACHE.delete(RAW_CACHE.keys().next().value);
+    const p = (async () => {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      if (fileType === "tgs") {
+        const buf = new Uint8Array(await res.arrayBuffer());
+        try {
+          const inflator = new pako.Inflate({ to: "string" });
+          let chunks = "";
+          inflator.onData = (c) => { chunks += c; };
+          inflator.push(buf, true);
+          if (inflator.err && !chunks) throw new Error("inflate failed");
+          return chunks;
+        } catch (e) {
+          return pako.inflate(buf, { to: "string" });
+        }
+      }
+      return await res.text();
+    })();
+    p.catch(() => RAW_CACHE.delete(url));
+    RAW_CACHE.set(url, p);
+  }
+  return RAW_CACHE.get(url);
+}
+
 const FALLBACK_URL = "https://raw.githubusercontent.com/magicmall004-dot/anisticker/refs/heads/main/CAN_NOT_LOAD.json";
 
 /**
@@ -59,31 +87,8 @@ export default function AnimationPreview({ url, fileType, size = "100%", autopla
         setLoading(true);
         setError(false);
 
-        let animData;
-
-        if (fileType === "tgs") {
-          // Fetch binary and decompress with pako, stopping cleanly at the
-          // end of the first gzip member so trailing garbage bytes (seen in
-          // some exported/re-saved .tgs files) don't break decompression.
-          const res = await fetch(url);
-          const buf = await res.arrayBuffer();
-          let json;
-          try {
-            const inflator = new pako.Inflate({ to: "string" });
-            let chunks = "";
-            inflator.onData = (chunk) => { chunks += chunk; };
-            inflator.push(new Uint8Array(buf), true);
-            if (inflator.err && !chunks) throw new Error(inflator.msg || "inflate failed");
-            json = chunks;
-          } catch (streamErr) {
-            // Fallback to the simple one-shot path for normal files
-            json = pako.inflate(new Uint8Array(buf), { to: "string" });
-          }
-          animData = JSON.parse(json);
-        } else {
-          const res = await fetch(url);
-          animData  = await res.json();
-        }
+        const raw = await loadRaw(url, fileType);
+        const animData = JSON.parse(raw);
 
         if (destroyed) return;
 

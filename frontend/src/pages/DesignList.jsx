@@ -406,7 +406,7 @@ export default function DesignList() {
 
       {/* Search bar + Tags + Sort + grid-density toggle + clear-filters chip — one row */}
       <div style={{ padding:"8px 16px 0", display:"flex", alignItems:"center", gap:8 }}>
-        <div style={{ flex:1, minWidth:0, display:"flex",alignItems:"center",gap:8,background:"var(--card)",border:"1px solid var(--border)",borderRadius:"var(--radius-sm)",padding:"8px 12px" }}>
+        <div className="search-box" style={{ flex:1, minWidth:0, display:"flex",alignItems:"center",gap:8,background:"var(--card)",border:"1px solid var(--border)",borderRadius:"var(--radius-sm)",padding:"8px 12px" }}>
           <Search size={16} color="var(--hint)" />
           <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search designs or tags…"
             style={{ flex:1,minWidth:0,background:"none",border:"none",outline:"none",color:"var(--text)",fontSize:14,fontFamily:"var(--font)" }} />
