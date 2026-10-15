@@ -38,6 +38,13 @@ document.addEventListener("click", (e) => {
       c.style.width = "100%"; c.style.height = "100%";
       fly.appendChild(c);
     }
+    const cv = src.querySelector("canvas");
+    if (!svg && cv) {
+      const c2 = document.createElement("canvas");
+      c2.width = cv.width; c2.height = cv.height; c2.style.cssText = "width:100%;height:100%";
+      c2.getContext("2d").drawImage(cv, 0, 0);
+      fly.appendChild(c2);
+    }
     document.body.appendChild(fly);
 
     const midX = (sx + tx) / 2;

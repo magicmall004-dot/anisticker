@@ -1198,3 +1198,23 @@ html[data-gfx="low"] .refresh-spin { animation-duration: 1s !important; }
 @keyframes otRing { 0% { transform: scale(0.85); opacity: 0.8; } 100% { transform: scale(1.5); opacity: 0; } }
 @keyframes otWiggle { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-12deg); } 75% { transform: rotate(12deg); } }
 @keyframes otSlide { 0% { transform: translateX(-120%); } 100% { transform: translateX(300%); } }
+
+/* ===== Performance fixes ===== */
+/* Low: infinite animations must not loop at 0.01ms (this froze or stuttered Lottie) */
+html[data-gfx="low"] *, html[data-gfx="low"] *::before, html[data-gfx="low"] *::after { animation-iteration-count: 1 !important; }
+html[data-gfx="low"] .spinner, html[data-gfx="low"] .refresh-spin,
+html[data-gfx="low"] .loading-dots span, html[data-gfx="low"] .dot-loader-circle, html[data-gfx="low"] .dot-loader-shadow {
+  animation-iteration-count: infinite !important; animation-duration: 1s !important;
+}
+
+/* Tilt layers only while a card is touched (before, every card kept one) */
+html[data-gfx="high"] .design-card-anim, html[data-gfx="ultra"] .design-card-anim { transform: none; }
+html[data-gfx="high"] .design-card.tilting .design-card-anim, html[data-gfx="ultra"] .design-card.tilting .design-card-anim,
+html[data-gfx="high"] .design-grid.gyro-on .design-card-anim, html[data-gfx="ultra"] .design-grid.gyro-on .design-card-anim {
+  transform: perspective(700px) rotateX(var(--prx, var(--grx, 0deg))) rotateY(var(--pry, var(--gry, 0deg)));
+}
+.design-card { will-change: auto; }
+.design-card:active, .design-card.tilting { will-change: transform; }
+
+/* The breathing glow on selected cards only runs on Ultra */
+html[data-gfx="high"] .design-card.selected, html[data-gfx="high"] .design-card.selected.card-animate-in { animation: none; }
