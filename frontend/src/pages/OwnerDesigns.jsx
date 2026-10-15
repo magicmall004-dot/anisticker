@@ -332,7 +332,7 @@ export default function OwnerDesigns() {
             onChange={tags => setEditing({...editing, tags})}/>
         </div>
 
-        <div className="field">
+        <div className="field" style={{ display: editing.type === "premium" ? "none" : undefined }}>
           <div className="label">Category</div>
           <select className="input" value={editing.category_id || ""}
             onChange={(e) => {
@@ -365,7 +365,7 @@ export default function OwnerDesigns() {
               <button key={t}
                 className={`btn ${editing.type===t ? "btn-primary" : "btn-secondary"}`}
                 style={{ flex:1, textTransform:"capitalize" }}
-                onClick={() => setEditing({...editing, type:t})}>
+                onClick={() => setEditing({...editing, type:t, ...(t === "premium" ? { category_id: null } : {})})}>
                 {t}
               </button>
             ))}
@@ -415,7 +415,7 @@ export default function OwnerDesigns() {
         </div>
 
         {/* Colors - hidden when instant mode (colors managed by LayerPicker) or type is fixed */}
-        {!editing.is_instant && editing.type !== "fixed" && (
+        {!editing.is_instant && editing.type !== "fixed" && editing.type !== "premium" && (
         <div className="card">
           <ColorPicker label={editing.type === "adaptive" ? "Adaptive Color" : "Primary Color"}
             value={editing.primary_color||"#000000"}
