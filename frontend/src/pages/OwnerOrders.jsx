@@ -137,58 +137,6 @@ function OrderDetail({ order, onBack, onStatus, paymentMethods }) {
         {/* Designs */}
         <OrderBrief order={order} />
 
-        {order.items?.length > 0 && (
-          <div className="card">
-            <div style={{ fontSize:10,fontWeight:800,color:"var(--accent)",letterSpacing:".08em",marginBottom:10 }}>ORDERED DESIGNS ({order.items.length})</div>
-            {order.items.map((item,i) => (
-              <div key={i} style={{ paddingBottom:i<order.items.length-1?14:0,marginBottom:i<order.items.length-1?14:0,borderBottom:i<order.items.length-1?"1px solid rgba(255,255,255,0.06)":"none" }}>
-                <div className="row" style={{ gap:10, alignItems:"flex-start" }}>
-                  {item.designs?.file_url && (
-                    <div style={{ width:52,height:52,borderRadius:10,overflow:"hidden",flexShrink:0,background:"var(--bg)" }}>
-                      <AnimationPreview url={item.designs.file_url} fileType={item.designs.file_type} size="52px" autoplay loop/>
-                    </div>
-                  )}
-                  <div style={{ flex:1 }}>
-                    <div className="row" style={{ gap:6,flexWrap:"wrap",alignItems:"center" }}>
-                      <span style={{ fontWeight:700,fontSize:14 }}>{item.designs?.name||"Design"}</span>
-                      {item.designs?.custom_id && (
-                        <span style={{ fontFamily:"monospace",fontSize:11,fontWeight:800,color:"var(--accent)",background:"rgba(var(--accent-rgb),0.1)",padding:"1px 6px",borderRadius:5 }}>#{item.designs.custom_id}</span>
-                      )}
-                      {item.designs?.custom_id && <CopyBtn text={String(item.designs.custom_id)}/>}
-                    </div>
-                    {(item.text_values||[]).map((tv,j) => (
-                      <div key={j} style={{ fontSize:12,color:"var(--hint)",marginTop:2 }}>
-                        <b style={{ color:"var(--text)" }}>{tv.name}:</b> {tv.value}
-                      </div>
-                    ))}
-                    {item.custom_text && !(item.text_values||[]).length && (
-                      <div style={{ fontSize:12,color:"var(--hint)",fontStyle:"italic",marginTop:2 }}>"{item.custom_text}"</div>
-                    )}
-                  </div>
-                </div>
-                {(item.primary_color||item.secondary_color||(item.extra_colors||[]).length>0) && (
-                  <div style={{ marginTop:8, marginLeft:62, display:"flex", flexDirection:"column", gap:6 }}>
-                    {[
-                      item.primary_color && { label:"Primary", hex:item.primary_color },
-                      item.secondary_color && { label:"Secondary", hex:item.secondary_color },
-                      ...(item.extra_colors||[]).map((c,ci) => ({ label:`Extra ${ci+1}`, hex:c })),
-                    ].filter(Boolean).map((c,ci) => (
-                      <div key={ci} className="row-between" style={{ gap:6 }}>
-                        <div className="row" style={{ gap:6 }}>
-                          <div style={{ width:20,height:20,borderRadius:5,background:c.hex,border:"2px solid var(--border)",flexShrink:0 }}/>
-                          <div style={{ fontSize:11,color:"var(--hint)" }}>{c.label}</div>
-                          <div style={{ fontFamily:"monospace",fontSize:12,fontWeight:600 }}>{c.hex}</div>
-                        </div>
-                        <CopyBtn text={c.hex}/>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-
         {/* Brand setup */}
         {(order.logo_name||order.logo_symbol||order.primary_color||order.logo_file_url) && (
           <div className="card">
