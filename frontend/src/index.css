@@ -1079,3 +1079,30 @@ html[data-gfx="low"] .mo-pending, html[data-gfx="balanced"] .mo-pending { animat
 .od-tab-on { animation: pillPop 0.4s var(--ease-spring) both; }
 .od-tab svg { transition: transform 0.35s var(--ease-spring); }
 .od-tab-on svg { transform: scale(1.2) rotate(-6deg); }
+
+/* ===== Preview polish ===== */
+.sheet.fp-card { animation: fpIn 0.45s var(--ease-spring) both; }
+.sheet.fp-card.fp-out { animation: fpOut 0.2s var(--ease-in) both; }
+@keyframes fpIn  { from { opacity:0; transform: scale(0.82) translateY(30px); } to { opacity:1; transform:none; } }
+@keyframes fpOut { to { opacity:0; transform: scale(0.92) translateY(14px); } }
+
+.fp-stage { position:relative; }
+.fp-glow { position:absolute; inset:-14px; border-radius:50%; background: radial-gradient(circle, var(--g) 0%, transparent 68%); opacity:0.35; filter: blur(22px); animation: fpBreath 3.2s ease-in-out infinite; pointer-events:none; }
+.fp-frame { position:relative; aspect-ratio:1; border-radius:var(--radius); background:var(--bg); overflow:hidden; border:1px solid rgba(4,217,255,0.2); box-shadow: 0 0 24px color-mix(in srgb, var(--g) 30%, transparent); }
+@keyframes fpBreath { 0%,100% { transform:scale(0.95); opacity:0.25; } 50% { transform:scale(1.06); opacity:0.5; } }
+
+.fp-dots { display:flex; gap:6px; justify-content:center; margin-top:10px; }
+.fp-dots span { width:14px; height:14px; border-radius:50%; border:1.5px solid rgba(255,255,255,0.25); animation: pageEnter 0.5s var(--ease-spring) 0.3s both; }
+
+.fp-card .btn-primary { box-shadow: 0 4px 18px rgba(4,217,255,0.35); }
+.fp-pop { animation: fpPop 0.4s var(--ease-spring) both; }
+@keyframes fpPop { 0% { transform:scale(1); } 40% { transform:scale(1.14); } 100% { transform:scale(1); } }
+
+.fp-burst { position:absolute; left:50%; top:50%; width:0; height:0; pointer-events:none; }
+.fp-burst i { position:absolute; left:-3px; top:-3px; width:6px; height:6px; border-radius:50%; background: var(--accent); animation: fpSpark 0.55s var(--ease-out) both; }
+.fp-burst i:nth-child(3n) { background:#FFC93C; }
+.fp-burst i:nth-child(3n+1) { background:#FF3D8A; }
+@keyframes fpSpark { from { transform: rotate(var(--a)) translateY(0) scale(1); opacity:1; } to { transform: rotate(var(--a)) translateY(-52px) scale(0.2); opacity:0; } }
+
+html[data-gfx="low"] .fp-glow, html[data-gfx="low"] .fp-burst { display:none; }
+html[data-gfx="balanced"] .fp-glow { animation:none; }
