@@ -1126,23 +1126,3 @@ html[data-theme="christmas"] .tp { background:#fff; border-radius:50%; box-shado
 html[data-theme="valentine"] .tp { animation-name:tpRise; top:auto; bottom:0; width:auto; height:auto; font-size:calc(14px * var(--s)); color:#FF3D8A; }
 html[data-theme="valentine"] .tp::before { content:"\2665"; }
 html[data-theme="lights"] .tp { animation-name:tpRise; top:auto; bottom:0; border-radius:50%; background:radial-gradient(circle,#FFE08A,#FFB020 55%,transparent 72%); }
-
-/* ===== Floating nav ===== */
-.bottom-nav {
-  left: 12px; right: 12px;
-  bottom: calc(10px + var(--safe-bottom));
-  padding-bottom: 0;
-  border-radius: 26px;
-  border: 1px solid rgba(255,255,255,0.10);
-  background: rgba(14,14,20,0.72);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.55), 0 0 22px rgba(var(--accent-rgb),0.10), inset 0 1px 0 rgba(255,255,255,0.07);
-  animation: navRise 0.6s var(--ease-spring) both;
-}
-@keyframes navRise { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
-.bottom-nav-item { padding-top: 10px; padding-bottom: 10px; border-radius: 22px; }
-.bottom-nav-item.active::before { inset: 4px 8px; border-radius: 20px; }
-
-/* Keep the cart bar above the floating nav */
-.cart-bar { margin-bottom: 10px; }
-
-html[data-gfx="low"] .bottom-nav { animation: none; box-shadow: 0 6px 18px rgba(0,0,0,0.5); background: rgba(14,14,20,0.95); }
