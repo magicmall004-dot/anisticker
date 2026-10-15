@@ -159,6 +159,10 @@ export default function OwnerDesigns() {
   const [requestingBot,   setRequestingBot]   = useState(false);
   const [botRequestSent,  setBotRequestSent]  = useState(false);
   const [detectedColors,  setDetectedColors]  = useState([]);
+  const [dq, setDq] = useState("");
+  const [fCat, setFCat] = useState("all");
+  const [fType, setFType] = useState("all");
+  const [fPack, setFPack] = useState("all");
   const fileRef = useRef();
 
   useEffect(() => { loadAll(); }, []);
@@ -574,10 +578,6 @@ export default function OwnerDesigns() {
     );
   }
 
-  const [dq, setDq] = useState("");
-  const [fCat, setFCat] = useState("all");
-  const [fType, setFType] = useState("all");
-  const [fPack, setFPack] = useState("all");
   const _n = dq.trim().toLowerCase().replace(/^#/, "");
   const typeList = Array.from(new Set(designs.map((d) => d.type).filter(Boolean)));
   const filteredDesigns = designs.filter((d) => {
