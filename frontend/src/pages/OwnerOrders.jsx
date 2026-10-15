@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import OrderBrief from "../components/OrderBrief";
 import { getOrders, updateOrderStatus, getPaymentMethods } from "../lib/api";
 import { formatPrice } from "../lib/utils";
 import { hapticNotification, haptic, showConfirm } from "../lib/telegram";
@@ -134,6 +135,8 @@ function OrderDetail({ order, onBack, onStatus, paymentMethods }) {
         )}
 
         {/* Designs */}
+        <OrderBrief order={order} />
+
         {order.items?.length > 0 && (
           <div className="card">
             <div style={{ fontSize:10,fontWeight:800,color:"var(--accent)",letterSpacing:".08em",marginBottom:10 }}>ORDERED DESIGNS ({order.items.length})</div>
