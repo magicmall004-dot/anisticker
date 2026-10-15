@@ -33,7 +33,7 @@ export default function FullscreenPreview({ design, onClose, onToggle, selected 
     }
   }
 
-  const glow = design.primary_color || "#04D9FF";
+  const glow = design.type === "premium" ? "#FFD700" : (design.primary_color || "#04D9FF");
   const dots = [design.primary_color, design.secondary_color].filter(Boolean);
 
   return (

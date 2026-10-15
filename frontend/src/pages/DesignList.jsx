@@ -36,6 +36,7 @@ function getBadge(design, { isFree, isNew }) {
 const TYPE_STYLES = {
   regular:  { label: "Regular",  color: "#9ca3af", bg: "rgba(156,163,175,0.14)", border: "rgba(156,163,175,0.35)" },
   adaptive: { label: "Adaptive", color: "#a78bfa", bg: "rgba(167,139,250,0.16)", border: "rgba(167,139,250,0.45)" },
+  premium:  { label: "★ Premium", color: "#FFD700", bg: "rgba(255,215,0,0.16)", border: "rgba(255,215,0,0.6)" },
   fixed:    { label: "Fixed",    color: "#fbbf24", bg: "rgba(251,191,36,0.14)",  border: "rgba(251,191,36,0.45)" },
 };
 
@@ -581,6 +582,7 @@ export default function DesignList() {
 
               const cardClasses = [
                 "design-card",
+                design.type === "premium" ? "design-premium" : "",
                 selected ? (effects.cardSelectedGlow ? "selected" : "selected-simple") : "",
                 effects.cardEntranceAnimation ? "card-animate-in" : "",
               ].filter(Boolean).join(" ");

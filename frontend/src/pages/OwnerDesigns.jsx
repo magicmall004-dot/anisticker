@@ -350,7 +350,7 @@ export default function OwnerDesigns() {
         <div className="field">
           <div className="label">Type</div>
           <div className="row" style={{ gap:10 }}>
-            {["regular","adaptive","fixed"].map((t) => (
+            {["regular","adaptive","fixed","premium"].map((t) => (
               <button key={t}
                 className={`btn ${editing.type===t ? "btn-primary" : "btn-secondary"}`}
                 style={{ flex:1, textTransform:"capitalize" }}
@@ -416,7 +416,7 @@ export default function OwnerDesigns() {
               onChange={(v) => setEditing({...editing, secondary_color:v})} />
           </div>
           )}
-          {editing.type === "regular" && (
+          {(editing.type === "regular" || editing.type === "premium") && (
           <div style={{ marginTop:14 }}>
             <div className="label" style={{ marginBottom:8 }}>Extra Colors</div>
             {(editing.extra_colors||[]).map((hex, idx) => (

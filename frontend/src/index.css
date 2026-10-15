@@ -1210,3 +1210,18 @@ html[data-gfx="high"] .design-grid.gyro-on .design-card-anim, html[data-gfx="ult
 
 /* The breathing glow on selected cards only runs on Ultra */
 html[data-gfx="high"] .design-card.selected, html[data-gfx="high"] .design-card.selected.card-animate-in { animation: none; }
+
+/* ===== Premium designs ===== */
+.design-card.design-premium:not(.selected):not(.selected-simple) {
+  border-color: rgba(255,215,0,0.55);
+  background: linear-gradient(160deg, rgba(255,215,0,0.07), var(--card) 55%);
+  box-shadow: 0 0 0 1px rgba(255,215,0,0.15), 0 4px 18px rgba(255,190,0,0.18);
+}
+.design-premium .design-card-price { color: #FFD700; text-shadow: 0 0 10px rgba(255,200,0,0.45); }
+.design-premium::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: linear-gradient(115deg, transparent 35%, rgba(255,225,120,0.22) 50%, transparent 65%);
+  background-size: 250% 100%; animation: premShine 3.6s linear infinite;
+}
+@keyframes premShine { from { background-position: 150% 0; } to { background-position: -150% 0; } }
+html[data-gfx="low"] .design-premium::after, html[data-gfx="balanced"] .design-premium::after { display: none; }
