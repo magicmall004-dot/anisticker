@@ -115,8 +115,8 @@ export default function OwnerFonts() {
             style={{
               display: "flex", justifyContent: "space-between", alignItems: "center",
               padding: "10px 12px", borderRadius: 10, cursor: "pointer",
-              background: selected?.id === fs.id ? "rgba(4,217,255,0.12)" : "rgba(255,255,255,0.04)",
-              border: selected?.id === fs.id ? "1px solid rgba(4,217,255,0.4)" : "1px solid rgba(255,255,255,0.08)",
+              background: selected?.id === fs.id ? "rgba(var(--accent-rgb),0.12)" : "rgba(255,255,255,0.04)",
+              border: selected?.id === fs.id ? "1px solid rgba(var(--accent-rgb),0.4)" : "1px solid rgba(255,255,255,0.08)",
             }}
           >
             <div>

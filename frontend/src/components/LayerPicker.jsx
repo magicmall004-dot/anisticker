@@ -121,8 +121,8 @@ export default function LayerPicker({ fileUrl, colorMap, onColorMapChange, detec
                 <div key={c} onClick={() => !added && quickAdd(c)}
                   style={{ display:"flex",alignItems:"center",gap:5,padding:"5px 10px",borderRadius:99,
                     cursor:added?"default":"pointer",transition:"all .15s",
-                    background:added?"rgba(4,217,255,0.1)":"rgba(255,255,255,0.05)",
-                    border:added?"1px solid rgba(4,217,255,0.3)":"1px solid rgba(255,255,255,0.1)",
+                    background:added?"rgba(var(--accent-rgb),0.1)":"rgba(255,255,255,0.05)",
+                    border:added?"1px solid rgba(var(--accent-rgb),0.3)":"1px solid rgba(255,255,255,0.1)",
                     opacity:added?0.5:1 }}>
                   <div style={{ width:14,height:14,borderRadius:"50%",background:c,border:"1.5px solid var(--border)" }}/>
                   <span style={{ fontSize:11,fontFamily:"monospace" }}>{c}</span>
@@ -157,8 +157,8 @@ export default function LayerPicker({ fileUrl, colorMap, onColorMapChange, detec
                   {[...ROLES, extraRole((colorMap.filter(x=>x.role?.startsWith("extra")).length)+1)].map(r => (
                     <div key={r.id} onClick={() => updateRole(i,r.id)}
                       style={{ padding:"3px 10px",borderRadius:99,fontSize:11,fontWeight:600,cursor:"pointer",
-                        background:c.role===r.id?"rgba(4,217,255,0.15)":"rgba(255,255,255,0.05)",
-                        border:c.role===r.id?"1px solid rgba(4,217,255,0.4)":"1px solid rgba(255,255,255,0.08)",
+                        background:c.role===r.id?"rgba(var(--accent-rgb),0.15)":"rgba(255,255,255,0.05)",
+                        border:c.role===r.id?"1px solid rgba(var(--accent-rgb),0.4)":"1px solid rgba(255,255,255,0.08)",
                         color:c.role===r.id?"var(--accent)":"var(--hint)",transition:"all .15s" }}>
                       {r.label}
                     </div>
@@ -190,8 +190,8 @@ export default function LayerPicker({ fileUrl, colorMap, onColorMapChange, detec
             {ROLES.map(r => (
               <div key={r.id} onClick={() => setNewRole(r.id)}
                 style={{ padding:"5px 12px",borderRadius:99,fontSize:12,fontWeight:600,cursor:"pointer",
-                  background:newRole===r.id?"rgba(4,217,255,0.15)":"rgba(255,255,255,0.05)",
-                  border:newRole===r.id?"1px solid rgba(4,217,255,0.4)":"1px solid rgba(255,255,255,0.08)",
+                  background:newRole===r.id?"rgba(var(--accent-rgb),0.15)":"rgba(255,255,255,0.05)",
+                  border:newRole===r.id?"1px solid rgba(var(--accent-rgb),0.4)":"1px solid rgba(255,255,255,0.08)",
                   color:newRole===r.id?"var(--accent)":"var(--hint)" }}>
                 {r.label}
               </div>

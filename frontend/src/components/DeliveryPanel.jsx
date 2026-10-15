@@ -22,7 +22,7 @@ export default function DeliveryPanel({ order, onDelivered }) {
 
   if (started) {
     return (
-      <div style={{ padding:"16px", background:"rgba(4,217,255,0.05)", borderRadius:"var(--radius)", border:"1px solid rgba(4,217,255,0.2)" }}>
+      <div style={{ padding:"16px", background:"rgba(var(--accent-rgb),0.05)", borderRadius:"var(--radius)", border:"1px solid rgba(var(--accent-rgb),0.2)" }}>
         <div style={{ fontWeight:700, marginBottom:8, fontSize:15 }}><Package size={14} style={{display:"inline",verticalAlign:"-2px"}}/> Delivery Started!</div>
         <div style={{ fontSize:13, color:"var(--hint)", lineHeight:1.7 }}>
           1. Open your Telegram bot chat<br/>

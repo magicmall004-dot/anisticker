@@ -131,7 +131,7 @@ export default function OwnerMessages() {
                   {VARIABLES.map(v => (
                     <div key={v.key} onClick={() => insertVar(msg.id, v.key)}
                       title={v.desc}
-                      style={{padding:"3px 8px",borderRadius:6,background:"rgba(4,217,255,0.1)",border:"1px solid rgba(4,217,255,0.2)",fontSize:11,fontFamily:"monospace",color:"var(--accent)",cursor:"pointer",fontWeight:600}}>
+                      style={{padding:"3px 8px",borderRadius:6,background:"rgba(var(--accent-rgb),0.1)",border:"1px solid rgba(var(--accent-rgb),0.2)",fontSize:11,fontFamily:"monospace",color:"var(--accent)",cursor:"pointer",fontWeight:600}}>
                       {v.key}
                     </div>
                   ))}
@@ -191,8 +191,8 @@ export default function OwnerMessages() {
                           {BUTTON_STYLES.map(s => (
                             <div key={s} onClick={() => updateButton(msg.id,idx,{style:s})}
                               style={{padding:"4px 12px",borderRadius:99,fontSize:11,fontWeight:700,cursor:"pointer",
-                                background:btn.style===s?"rgba(4,217,255,0.15)":"rgba(255,255,255,0.05)",
-                                border:btn.style===s?"1px solid rgba(4,217,255,0.4)":"1px solid rgba(255,255,255,0.08)",
+                                background:btn.style===s?"rgba(var(--accent-rgb),0.15)":"rgba(255,255,255,0.05)",
+                                border:btn.style===s?"1px solid rgba(var(--accent-rgb),0.4)":"1px solid rgba(255,255,255,0.08)",
                                 color:btn.style===s?"var(--accent)":"var(--hint)"}}>
                               {s}
                             </div>

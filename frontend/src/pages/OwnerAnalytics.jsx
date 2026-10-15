@@ -41,7 +41,7 @@ function RevenueChart({ data }) {
     <div style={{ display:"flex",alignItems:"flex-end",gap:4,height:80,padding:"4px 0" }}>
       {data.map((d,i) => (
         <div key={i} style={{ flex:1,display:"flex",flexDirection:"column",alignItems:"center",gap:3 }}>
-          <div style={{ width:"100%",borderRadius:"3px 3px 0 0",background:`rgba(4,217,255,${0.3+0.7*(d.revenue/max)})`,height:`${Math.max(4,(d.revenue/max)*100)}%`,transition:"height 0.5s ease",cursor:"default" }} title={`${d.label}: ${formatPrice(d.revenue)}`}/>
+          <div style={{ width:"100%",borderRadius:"3px 3px 0 0",background:`rgba(var(--accent-rgb),${0.3+0.7*(d.revenue/max)})`,height:`${Math.max(4,(d.revenue/max)*100)}%`,transition:"height 0.5s ease",cursor:"default" }} title={`${d.label}: ${formatPrice(d.revenue)}`}/>
           <div style={{ fontSize:8,color:"var(--hint)",textAlign:"center",whiteSpace:"nowrap",overflow:"hidden",width:"100%",textOverflow:"ellipsis" }}>{d.label}</div>
         </div>
       ))}

@@ -24,7 +24,7 @@ function CopyBtn({ text }) {
 function statusConfig(s) {
   return {
     pending:   { label:"Pending",   color:"#f59e0b", bg:"rgba(245,158,11,0.12)",  icon:Clock },
-    accepted:  { label:"Accepted",  color:"#04D9FF", bg:"rgba(4,217,255,0.12)",   icon:CheckCircle },
+    accepted:  { label:"Accepted",  color:"#04D9FF", bg:"rgba(var(--accent-rgb),0.12)",   icon:CheckCircle },
     done:      { label:"Done",      color:"#22c55e", bg:"rgba(34,197,94,0.12)",   icon:CheckCircle },
     cancelled: { label:"Cancelled", color:"#ef4444", bg:"rgba(239,68,68,0.12)",   icon:XCircle },
   }[s] || { label:s, color:"var(--hint)", bg:"rgba(255,255,255,0.05)", icon:Clock };
@@ -317,13 +317,13 @@ export default function MyOrders() {
         {["all","pending","accepted","done","cancelled"].map(f => (
           <button key={f} className={`mo-pill ${filter===f?"on":""}`} onClick={() => setFilter(f)} style={{
             padding:"6px 14px",borderRadius:99,fontSize:12,fontWeight:700,border:"none",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,
-            background:filter===f?"rgba(4,217,255,0.15)":"rgba(255,255,255,0.06)",
+            background:filter===f?"rgba(var(--accent-rgb),0.15)":"rgba(255,255,255,0.06)",
             color:filter===f?"var(--accent)":"var(--hint)",
-            boxShadow:filter===f?"0 0 10px rgba(4,217,255,0.2)":"none",
+            boxShadow:filter===f?"0 0 10px rgba(var(--accent-rgb),0.2)":"none",
           }}>
             {f.charAt(0).toUpperCase()+f.slice(1)}
             {f !== "all" && orders.filter(o=>o.status===f).length > 0 && (
-              <span style={{ marginLeft:4,background:filter===f?"rgba(4,217,255,0.2)":"rgba(255,255,255,0.1)",borderRadius:99,padding:"0 5px",fontSize:10 }}>
+              <span style={{ marginLeft:4,background:filter===f?"rgba(var(--accent-rgb),0.2)":"rgba(255,255,255,0.1)",borderRadius:99,padding:"0 5px",fontSize:10 }}>
                 {orders.filter(o=>o.status===f).length}
               </span>
             )}

@@ -87,7 +87,7 @@ export default function OwnerBroadcast() {
         <div style={{display:"flex",flexWrap:"wrap",gap:6}}>
           {VARIABLES.map(v => (
             <div key={v.key} onClick={() => insertVar(v.key)} title={v.desc}
-              style={{padding:"3px 8px",borderRadius:6,background:"rgba(4,217,255,0.1)",border:"1px solid rgba(4,217,255,0.2)",fontSize:11,fontFamily:"monospace",color:"var(--accent)",cursor:"pointer",fontWeight:600}}>
+              style={{padding:"3px 8px",borderRadius:6,background:"rgba(var(--accent-rgb),0.1)",border:"1px solid rgba(var(--accent-rgb),0.2)",fontSize:11,fontFamily:"monospace",color:"var(--accent)",cursor:"pointer",fontWeight:600}}>
               {v.key}
             </div>
           ))}

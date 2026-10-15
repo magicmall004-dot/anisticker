@@ -20,7 +20,7 @@ function getTimeParts(endAt) {
 
 function TimeBox({ value, label }) {
   return (
-    <div style={{ background:"var(--card)",borderRadius:10,padding:"10px 4px",textAlign:"center",minWidth:54,border:"1px solid rgba(124,58,237,0.2)" }}>
+    <div style={{ background:"var(--card)",borderRadius:10,padding:"10px 4px",textAlign:"center",minWidth:54,border:"1px solid rgba(var(--accent2-rgb),0.2)" }}>
       <div key={value} className="gv-tick" style={{ fontSize:22,fontWeight:800,color:"#a78bfa",fontVariantNumeric:"tabular-nums" }}>{String(value).padStart(2,"0")}</div>
       <div style={{ fontSize:9,color:"var(--hint)",textTransform:"uppercase",letterSpacing:".05em" }}>{label}</div>
     </div>

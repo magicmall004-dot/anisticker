@@ -41,7 +41,7 @@ export default function OwnerGiveaway() {
       {loading ? <div style={{ display:"flex",justifyContent:"center",padding:24 }}><div className="spinner"/></div>
       : giveaways.length===0 ? <div className="empty-state" style={{ padding:"24px 0" }}><Trophy size={32}/><div>No giveaways yet</div></div>
       : giveaways.map((g) => (
-        <div key={g.id} className="card" style={{ border:g.status==="active"?"1px solid rgba(124,58,237,0.3)":"1px solid rgba(255,255,255,0.07)" }}>
+        <div key={g.id} className="card" style={{ border:g.status==="active"?"1px solid rgba(var(--accent2-rgb),0.3)":"1px solid rgba(255,255,255,0.07)" }}>
           <div className="row-between" style={{ marginBottom:8 }}>
             <div className="row" style={{ gap:10 }}>
               {g.tgs_url && <AnimationPreview url={g.tgs_url} fileType={g.tgs_url.endsWith("tgs")?"tgs":"json"} size="36px" autoplay loop/>}
@@ -50,7 +50,7 @@ export default function OwnerGiveaway() {
                 <div style={{ fontSize:11,color:"var(--hint)" }}>{g.participant_count} joined · {g.winner_count} winner{g.winner_count>1?"s":""}</div>
               </div>
             </div>
-            <span style={{ fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:99,background:g.status==="active"?"rgba(124,58,237,0.15)":g.status==="drawn"?"rgba(34,197,94,0.15)":"rgba(239,68,68,0.15)",color:g.status==="active"?"#a78bfa":g.status==="drawn"?"var(--success)":"var(--danger)" }}>{g.status}</span>
+            <span style={{ fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:99,background:g.status==="active"?"rgba(var(--accent2-rgb),0.15)":g.status==="drawn"?"rgba(34,197,94,0.15)":"rgba(239,68,68,0.15)",color:g.status==="active"?"#a78bfa":g.status==="drawn"?"var(--success)":"var(--danger)" }}>{g.status}</span>
           </div>
           <div style={{ fontSize:12,color:"var(--hint)",marginBottom:8 }}>
             {g.prize_type==="cash"?`💰 ${g.cash_mode==="exact"?`${formatPrice(g.prize_amount)} each`:`${formatPrice(g.prize_amount)} split`}`:`🎨 ${g.design_ids?.length||0} design(s) in pool`}

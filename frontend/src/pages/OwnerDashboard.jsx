@@ -70,9 +70,9 @@ export default function OwnerDashboard() {
             padding:"7px 14px", borderRadius:99, border:"none",
             cursor:"pointer", whiteSpace:"nowrap", fontSize:12, fontWeight:700,
             flexShrink:0,
-            background: tab===id ? "rgba(4,217,255,0.15)" : "rgba(255,255,255,0.05)",
+            background: tab===id ? "rgba(var(--accent-rgb),0.15)" : "rgba(255,255,255,0.05)",
             color: tab===id ? "var(--accent)" : "var(--hint)",
-            boxShadow: tab===id ? "0 0 10px rgba(4,217,255,0.2)" : "none",
+            boxShadow: tab===id ? "0 0 10px rgba(var(--accent-rgb),0.2)" : "none",
             transition:"all .15s",
           }}>
             <Icon size={13} />

@@ -325,8 +325,8 @@ export default function DesignList() {
   function squareBtnStyle(active) {
     return {
       display:"flex", alignItems:"center", justifyContent:"center", gap:2, flexShrink:0,
-      background: active ? "rgba(4,217,255,0.12)" : "rgba(255,255,255,0.05)",
-      border: active ? "1px solid rgba(4,217,255,0.3)" : "1px solid rgba(255,255,255,0.1)",
+      background: active ? "rgba(var(--accent-rgb),0.12)" : "rgba(255,255,255,0.05)",
+      border: active ? "1px solid rgba(var(--accent-rgb),0.3)" : "1px solid rgba(255,255,255,0.1)",
       borderRadius:"var(--radius-sm)", padding:"10px 11px",
       color: active ? "var(--accent)" : "var(--hint)",
       cursor:"pointer",
@@ -659,7 +659,7 @@ export default function DesignList() {
                     {(design.tags||[]).length>0 && (
                       <div style={{ display:"flex",flexWrap:"wrap",gap:3,marginTop:3 }}>
                         {(design.tags||[]).slice(0,2).map((tag) => (
-                          <span key={tag} style={{ fontSize:9,fontWeight:600,padding:"1px 5px",borderRadius:4,background:"rgba(4,217,255,0.1)",color:"var(--accent)",border:"1px solid rgba(4,217,255,0.2)" }}>#{tag}</span>
+                          <span key={tag} style={{ fontSize:9,fontWeight:600,padding:"1px 5px",borderRadius:4,background:"rgba(var(--accent-rgb),0.1)",color:"var(--accent)",border:"1px solid rgba(var(--accent-rgb),0.2)" }}>#{tag}</span>
                         ))}
                       </div>
                     )}

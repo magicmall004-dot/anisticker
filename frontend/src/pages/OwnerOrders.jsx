@@ -9,7 +9,7 @@ import DeliveryPanel from "../components/DeliveryPanel";
 function statusCfg(s) {
   return {
     pending:   { label:"Pending",   color:"#f59e0b", bg:"rgba(245,158,11,0.12)" },
-    accepted:  { label:"Accepted",  color:"#04D9FF", bg:"rgba(4,217,255,0.12)"  },
+    accepted:  { label:"Accepted",  color:"#04D9FF", bg:"rgba(var(--accent-rgb),0.12)"  },
     done:      { label:"Done",      color:"#22c55e", bg:"rgba(34,197,94,0.12)"  },
     cancelled: { label:"Cancelled", color:"#ef4444", bg:"rgba(239,68,68,0.12)"  },
   }[s] || { label:s, color:"var(--hint)", bg:"rgba(255,255,255,0.05)" };
@@ -68,7 +68,7 @@ function OrderDetail({ order, onBack, onStatus, paymentMethods }) {
         <div className="card-glow">
           <div style={{ fontSize:10,fontWeight:800,color:"var(--accent)",letterSpacing:".08em",marginBottom:10 }}>CUSTOMER</div>
           <div className="row" style={{ gap:10 }}>
-            {order.user?.photo_url && <img src={order.user.photo_url} alt="" style={{ width:44,height:44,borderRadius:"50%",objectFit:"cover",border:"2px solid rgba(4,217,255,0.3)",flexShrink:0 }}/>}
+            {order.user?.photo_url && <img src={order.user.photo_url} alt="" style={{ width:44,height:44,borderRadius:"50%",objectFit:"cover",border:"2px solid rgba(var(--accent-rgb),0.3)",flexShrink:0 }}/>}
             <div style={{ flex:1 }}>
               <div style={{ fontWeight:700,fontSize:15 }}>{order.user?.first_name} {order.user?.last_name}</div>
               {order.user?.username && <div style={{ fontSize:13,color:"var(--hint)" }}>@{order.user.username}</div>}
@@ -149,7 +149,7 @@ function OrderDetail({ order, onBack, onStatus, paymentMethods }) {
                     <div className="row" style={{ gap:6,flexWrap:"wrap",alignItems:"center" }}>
                       <span style={{ fontWeight:700,fontSize:14 }}>{item.designs?.name||"Design"}</span>
                       {item.designs?.custom_id && (
-                        <span style={{ fontFamily:"monospace",fontSize:11,fontWeight:800,color:"var(--accent)",background:"rgba(4,217,255,0.1)",padding:"1px 6px",borderRadius:5 }}>#{item.designs.custom_id}</span>
+                        <span style={{ fontFamily:"monospace",fontSize:11,fontWeight:800,color:"var(--accent)",background:"rgba(var(--accent-rgb),0.1)",padding:"1px 6px",borderRadius:5 }}>#{item.designs.custom_id}</span>
                       )}
                       {item.designs?.custom_id && <CopyBtn text={String(item.designs.custom_id)}/>}
                     </div>
@@ -266,9 +266,9 @@ function OrderDetail({ order, onBack, onStatus, paymentMethods }) {
                 style={{
                   flex:1,padding:14,borderRadius:"var(--radius-sm)",cursor:"pointer",
                   fontWeight:700,fontSize:14,fontFamily:"var(--font)",
-                  background: s==="cancelled"?"rgba(239,68,68,0.15)":s==="done"?"rgba(34,197,94,0.15)":"rgba(4,217,255,0.15)",
+                  background: s==="cancelled"?"rgba(239,68,68,0.15)":s==="done"?"rgba(34,197,94,0.15)":"rgba(var(--accent-rgb),0.15)",
                   color: s==="cancelled"?"var(--danger)":s==="done"?"var(--success)":"var(--accent)",
-                  border: `1px solid ${s==="cancelled"?"rgba(239,68,68,0.3)":s==="done"?"rgba(34,197,94,0.3)":"rgba(4,217,255,0.3)"}`,
+                  border: `1px solid ${s==="cancelled"?"rgba(239,68,68,0.3)":s==="done"?"rgba(34,197,94,0.3)":"rgba(var(--accent-rgb),0.3)"}`,
                 }}>
                 {busy?"…":s.charAt(0).toUpperCase()+s.slice(1)}
               </button>
@@ -350,7 +350,7 @@ export default function OwnerOrders() {
           return (
             <button key={f} onClick={() => setFilter(f)} style={{
               padding:"6px 12px",borderRadius:99,fontSize:12,fontWeight:700,border:"none",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,display:"flex",alignItems:"center",gap:5,
-              background:filter===f?(f==="all"?"rgba(4,217,255,0.15)":cfg.bg):"rgba(255,255,255,0.05)",
+              background:filter===f?(f==="all"?"rgba(var(--accent-rgb),0.15)":cfg.bg):"rgba(255,255,255,0.05)",
               color:filter===f?(f==="all"?"var(--accent)":cfg.color):"var(--hint)",
             }}>
               {f.charAt(0).toUpperCase()+f.slice(1)}

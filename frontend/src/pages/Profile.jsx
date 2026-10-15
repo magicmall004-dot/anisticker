@@ -58,9 +58,9 @@ export default function Profile() {
       <div className="page-body pf-auto">
         <div className="card-glow" style={{ textAlign:"center", padding:"24px 16px" }}>
           {user?.photo_url ? (
-            <img src={user.photo_url} alt="" style={{ width:72,height:72,borderRadius:"50%",objectFit:"cover",margin:"0 auto 12px",border:"2px solid rgba(4,217,255,0.4)" }} />
+            <img src={user.photo_url} alt="" style={{ width:72,height:72,borderRadius:"50%",objectFit:"cover",margin:"0 auto 12px",border:"2px solid rgba(var(--accent-rgb),0.4)" }} />
           ) : (
-            <div style={{ width:72,height:72,borderRadius:"50%",margin:"0 auto 12px",background:"rgba(4,217,255,0.1)",border:"2px solid rgba(4,217,255,0.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,fontWeight:800 }} className="glow-text">
+            <div style={{ width:72,height:72,borderRadius:"50%",margin:"0 auto 12px",background:"rgba(var(--accent-rgb),0.1)",border:"2px solid rgba(var(--accent-rgb),0.3)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,fontWeight:800 }} className="glow-text">
               {(user?.first_name||"?")[0]}
             </div>
           )}
@@ -148,7 +148,7 @@ export default function Profile() {
                         return (
                           <div key={t.name} style={{
                             display:"flex", alignItems:"center", gap:12, padding:"12px 14px", borderRadius:12,
-                            background: isCurrent ? "rgba(4,217,255,0.1)" : "var(--bg)",
+                            background: isCurrent ? "rgba(var(--accent-rgb),0.1)" : "var(--bg)",
                             border: isCurrent ? "1px solid var(--accent)" : "1px solid var(--border)",
                             opacity: unlocked ? 1 : 0.55,
                           }}>
@@ -160,7 +160,7 @@ export default function Profile() {
                             <div style={{ flex:1 }}>
                               <div style={{ fontWeight:700, fontSize:14, display:"flex", alignItems:"center", gap:6 }}>
                                 {t.name}
-                                {isCurrent && <span style={{ fontSize:9, fontWeight:700, color:"var(--accent)", background:"rgba(4,217,255,0.15)", padding:"2px 6px", borderRadius:99 }}>CURRENT</span>}
+                                {isCurrent && <span style={{ fontSize:9, fontWeight:700, color:"var(--accent)", background:"rgba(var(--accent-rgb),0.15)", padding:"2px 6px", borderRadius:99 }}>CURRENT</span>}
                               </div>
                               <div style={{ fontSize:11, color:"var(--hint)", marginTop:2 }}>
                                 {t.min === 0 ? "Starting tier" : `${formatPrice(t.min)}+ lifetime spend`}

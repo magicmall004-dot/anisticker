@@ -51,7 +51,7 @@ function TagInput({ tags, onChange, suggestions = [] }) {
   return (
     <div style={{ display:"flex",flexWrap:"wrap",gap:6,padding:"8px 10px",borderRadius:"var(--radius-sm)",background:"var(--card)",border:"1px solid var(--border)",minHeight:42,alignItems:"center" }}>
       {upperTags.map((tag,i) => (
-        <div key={i} style={{ display:"flex",alignItems:"center",gap:4,padding:"2px 8px",borderRadius:99,background:"rgba(4,217,255,0.12)",border:"1px solid rgba(4,217,255,0.25)",fontSize:12,fontWeight:600,color:"var(--accent)" }}>
+        <div key={i} style={{ display:"flex",alignItems:"center",gap:4,padding:"2px 8px",borderRadius:99,background:"rgba(var(--accent-rgb),0.12)",border:"1px solid rgba(var(--accent-rgb),0.25)",fontSize:12,fontWeight:600,color:"var(--accent)" }}>
           #{tag}
           <span onClick={() => onChange(tags.filter((_,j)=>j!==i))} style={{ cursor:"pointer",fontSize:13,lineHeight:1,color:"var(--accent)",marginLeft:2 }}>×</span>
         </div>
@@ -391,7 +391,7 @@ export default function OwnerDesigns() {
                 {requestingBot ? "Requesting…" : "📤 Send via Bot instead"}
               </button>
             ) : (
-              <div style={{ background:"rgba(4,217,255,0.08)", border:"1px solid rgba(4,217,255,0.2)", borderRadius:8, padding:"10px 12px" }}>
+              <div style={{ background:"rgba(var(--accent-rgb),0.08)", border:"1px solid rgba(var(--accent-rgb),0.2)", borderRadius:8, padding:"10px 12px" }}>
                 <div style={{ fontSize:12, color:"var(--text)", marginBottom:8 }}>
                   Now forward the file directly to your bot in Telegram (don't save it to your device first — send it straight from wherever you got it).
                 </div>
@@ -589,7 +589,7 @@ export default function OwnerDesigns() {
     return true;
   });
   const hasFilter = _n || fCat !== "all" || fType !== "all" || fPack !== "all";
-  const chip = (on) => ({ padding:"6px 12px", borderRadius:99, fontSize:11, fontWeight:700, border:"none", cursor:"pointer", whiteSpace:"nowrap", flexShrink:0, background:on?"rgba(4,217,255,0.15)":"rgba(255,255,255,0.06)", color:on?"var(--accent)":"var(--hint)" });
+  const chip = (on) => ({ padding:"6px 12px", borderRadius:99, fontSize:11, fontWeight:700, border:"none", cursor:"pointer", whiteSpace:"nowrap", flexShrink:0, background:on?"rgba(var(--accent-rgb),0.15)":"rgba(255,255,255,0.06)", color:on?"var(--accent)":"var(--hint)" });
 
   return (
     <div className="page-body">

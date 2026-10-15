@@ -48,7 +48,7 @@ function Avatar({ leader, size, color }) {
     return <img src={leader.photo_url} alt="" style={{ width:size, height:size, borderRadius:"50%", objectFit:"cover", border }} />;
   }
   return (
-    <div style={{ width:size, height:size, borderRadius:"50%", background:"rgba(4,217,255,0.1)", border, display:"flex", alignItems:"center", justifyContent:"center", fontSize:size*0.4, fontWeight:700, color:"var(--accent)" }}>
+    <div style={{ width:size, height:size, borderRadius:"50%", background:"rgba(var(--accent-rgb),0.1)", border, display:"flex", alignItems:"center", justifyContent:"center", fontSize:size*0.4, fontWeight:700, color:"var(--accent)" }}>
       {(leader.first_name || "?")[0]}
     </div>
   );

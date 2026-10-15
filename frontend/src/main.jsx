@@ -4,6 +4,7 @@ import App from "./App";
 import "./index.css";
 import "./lib/dragScroll";
 import "./lib/flyToCart";
+import "./lib/theme";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

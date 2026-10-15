@@ -70,7 +70,7 @@ export default function WalletPage() {
           <Plus size={18} /> Top Up Balance
         </button>
 
-        <div className="card" style={{ border:"1px dashed rgba(4,217,255,0.3)" }}>
+        <div className="card" style={{ border:"1px dashed rgba(var(--accent-rgb),0.3)" }}>
           <div className="row" style={{ gap:8, marginBottom:10 }}>
             <Gift size={18} color="var(--accent)" />
             <span style={{ fontWeight:600, fontSize:14 }}>Have a Redeem Code?</span>
@@ -208,7 +208,7 @@ function TopupForm({ onBack, onDone }) {
               </div>
             ))}
             {selected && (
-              <div style={{ fontSize:13, color:"var(--accent)", background:"rgba(4,217,255,0.08)", border:"1px solid rgba(4,217,255,0.2)", borderRadius:10, padding:"10px 12px" }}>
+              <div style={{ fontSize:13, color:"var(--accent)", background:"rgba(var(--accent-rgb),0.08)", border:"1px solid rgba(var(--accent-rgb),0.2)", borderRadius:10, padding:"10px 12px" }}>
                 Send {amount ? formatPrice(Number(amount)) : "your amount"} to {selected.name}{selected.account_number ? ` (${selected.account_number})` : ""}, then upload your payment screenshot below.
               </div>
             )}
@@ -217,7 +217,7 @@ function TopupForm({ onBack, onDone }) {
         <div className="section-title">Payment Screenshot</div>
         <input ref={fileRef} type="file" accept="image/*" style={{ display:"none" }} onChange={handleFile} />
         {!txImage ? (
-          <button className="btn btn-secondary btn-full" disabled={uploading} onClick={() => fileRef.current?.click()} style={{ padding:"24px 16px", flexDirection:"column", gap:8, border:"2px dashed rgba(4,217,255,0.2)" }}>
+          <button className="btn btn-secondary btn-full" disabled={uploading} onClick={() => fileRef.current?.click()} style={{ padding:"24px 16px", flexDirection:"column", gap:8, border:"2px dashed rgba(var(--accent-rgb),0.2)" }}>
             <Upload size={24} color="var(--accent)" />
             <span style={{ color:"var(--accent)" }}>{uploading ? "Uploading…" : "Tap to upload"}</span>
           </button>

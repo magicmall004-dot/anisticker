@@ -56,10 +56,10 @@ export default function GiveawayBanner() {
   return (
     <div style={{ padding:"0 16px" }}>
       <div onClick={() => navigate(`/giveaway/${giveaway.id}`)} style={{
-        background:"linear-gradient(135deg,rgba(124,58,237,0.15),rgba(4,217,255,0.1))",
-        border:"1px solid rgba(124,58,237,0.3)", borderRadius:"var(--radius)",
+        background:"linear-gradient(135deg,rgba(var(--accent2-rgb),0.15),rgba(var(--accent-rgb),0.1))",
+        border:"1px solid rgba(var(--accent2-rgb),0.3)", borderRadius:"var(--radius)",
         padding:14, display:"flex", alignItems:"center", gap:12,
-        boxShadow:"0 0 24px rgba(124,58,237,0.15)", cursor:"pointer",
+        boxShadow:"0 0 24px rgba(var(--accent2-rgb),0.15)", cursor:"pointer",
       }}>
         <div style={{ width:48,height:48,flexShrink:0,borderRadius:12,background:"var(--card)",display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden" }}>
           {giveaway.tgs_url ? (

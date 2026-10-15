@@ -132,7 +132,7 @@ export default function Payment() {
         {loading ? (
           <div style={{ display:"flex", justifyContent:"center", padding:24 }}><div className="spinner"/></div>
         ) : (
-          <div className={`card ${insufficient ? "pay-short" : ""}`} style={{ border: insufficient ? "1px solid rgba(239,68,68,0.3)" : "1px solid rgba(4,217,255,0.2)" }}>
+          <div className={`card ${insufficient ? "pay-short" : ""}`} style={{ border: insufficient ? "1px solid rgba(239,68,68,0.3)" : "1px solid rgba(var(--accent-rgb),0.2)" }}>
             <div className="row-between">
               <div className="row" style={{ gap:10 }}>
                 <Wallet size={22} color={insufficient ? "var(--danger)" : "var(--accent)"} />

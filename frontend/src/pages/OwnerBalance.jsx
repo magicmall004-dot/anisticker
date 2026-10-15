@@ -182,7 +182,7 @@ function ManualAdjust() {
             {filteredUsers.length === 0 && <div style={{ padding:14,fontSize:12,color:"var(--hint)",textAlign:"center" }}>No users found</div>}
             {filteredUsers.map((u) => (
               <div key={u.id} onClick={() => { setSelected(u); setShowList(false); setQ(""); haptic("light"); }}
-                style={{ padding:"10px 14px",cursor:"pointer",borderBottom:"1px solid rgba(255,255,255,0.05)",background:selected?.id===u.id?"rgba(4,217,255,0.08)":"transparent" }}>
+                style={{ padding:"10px 14px",cursor:"pointer",borderBottom:"1px solid rgba(255,255,255,0.05)",background:selected?.id===u.id?"rgba(var(--accent-rgb),0.08)":"transparent" }}>
                 <div className="row-between">
                   <span style={{ fontWeight:600,fontSize:13 }}>{u.first_name} {u.last_name}{u.username?` (@${u.username})`:""}</span>
                   <span style={{ fontSize:12,color:"var(--success)",fontWeight:700 }}>{formatPrice(u.balance||0)}</span>
