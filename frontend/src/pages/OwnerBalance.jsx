@@ -130,8 +130,16 @@ function ManualAdjust() {
   const [note,     setNote]     = useState("");
   const [saving,   setSaving]   = useState(false);
   const [showList, setShowList] = useState(false);
+  const [q, setQ] = useState("");
 
   useEffect(() => { getAllBalances().then(setUsers).finally(() => setLoading(false)); }, []);
+
+  const _needle = q.trim().toLowerCase().replace(/^@/, "");
+  const filteredUsers = !_needle ? users : users.filter((u) =>
+    `${u.first_name || ""} ${u.last_name || ""}`.toLowerCase().includes(_needle) ||
+    (u.username || "").toLowerCase().includes(_needle) ||
+    String(u.id).includes(_needle)
+  );
 
   async function submit() {
     if (!selected||!amount||Number(amount)<=0) return;
@@ -166,9 +174,14 @@ function ManualAdjust() {
           </div>
         </div>
         {showList && (
-          <div className="card" style={{ padding:0,overflow:"hidden",maxHeight:200,overflowY:"auto" }}>
-            {users.map((u) => (
-              <div key={u.id} onClick={() => { setSelected(u); setShowList(false); haptic("light"); }}
+          <div className="card" style={{ padding:0,overflow:"hidden",maxHeight:260,overflowY:"auto" }}>
+            <div className="ob-search" style={{ position:"sticky",top:0,zIndex:2,padding:8,background:"var(--card)",borderBottom:"1px solid var(--border)" }}>
+              <input className="input" autoFocus value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, @username or ID…" style={{ fontSize:13 }} />
+              <div style={{ fontSize:10,color:"var(--hint)",marginTop:4 }}>{filteredUsers.length} of {users.length} users</div>
+            </div>
+            {filteredUsers.length === 0 && <div style={{ padding:14,fontSize:12,color:"var(--hint)",textAlign:"center" }}>No users found</div>}
+            {filteredUsers.map((u) => (
+              <div key={u.id} onClick={() => { setSelected(u); setShowList(false); setQ(""); haptic("light"); }}
                 style={{ padding:"10px 14px",cursor:"pointer",borderBottom:"1px solid rgba(255,255,255,0.05)",background:selected?.id===u.id?"rgba(4,217,255,0.08)":"transparent" }}>
                 <div className="row-between">
                   <span style={{ fontWeight:600,fontSize:13 }}>{u.first_name} {u.last_name}{u.username?` (@${u.username})`:""}</span>
