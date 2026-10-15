@@ -73,9 +73,6 @@ export default function AnimationPreview({ url, fileType, size = "100%", autopla
   const containerRef = useRef(null);
   const fallbackRef = useRef(null);
   const animRef = useRef(null);
-  const playRef = useRef(play);
-  playRef.current = play;
-  const wrapRef = useRef(null);
   const fallbackAnimRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -107,20 +104,12 @@ export default function AnimationPreview({ url, fileType, size = "100%", autopla
 
         animRef.current = lottie.loadAnimation({
           container:    containerRef.current,
-          renderer:     !autoplay ? "canvas" : "svg",
+          renderer:     "svg",
           loop,
           autoplay,
           animationData: animData,
-          rendererSettings: !autoplay
-            ? { preserveAspectRatio: `xMidYMid ${fit}`, clearCanvas: true, progressiveLoad: true }
-            : { preserveAspectRatio: `xMidYMid ${fit}`, progressiveLoad: true },
+          rendererSettings: { preserveAspectRatio: `xMidYMid ${fit}` },
         });
-        if (!autoplay) {
-          const a = animRef.current;
-          // tapped before it finished loading: play now; otherwise show a poster frame
-          if (playRef.current) a.goToAndPlay(0);
-          else { try { a.goToAndStop(Math.floor(a.totalFrames * 0.4), true); } catch (e) {} }
-        }
 
         setLoading(false);
       } catch (e) {
@@ -172,18 +161,6 @@ export default function AnimationPreview({ url, fileType, size = "100%", autopla
     };
   }, [error]);
 
-  // Pause animations that are off-screen
-  useEffect(() => {
-    if (!wrapRef.current || !("IntersectionObserver" in window)) return;
-    const io = new IntersectionObserver(([e]) => {
-      const a = animRef.current;
-      if (!a) return;
-      if (e.isIntersecting) { if (autoplay) a.play(); } else a.pause();
-    }, { rootMargin: "120px" });
-    io.observe(wrapRef.current);
-    return () => io.disconnect();
-  }, [autoplay]);
-
   // External play trigger
   useEffect(() => {
     if (play && animRef.current) {
@@ -192,7 +169,7 @@ export default function AnimationPreview({ url, fileType, size = "100%", autopla
   }, [play]);
 
   return (
-    <div ref={wrapRef} style={{ width: size, height: size, position: "relative", flexShrink: 0, overflow: "hidden" }}>
+    <div style={{ width: size, height: size, position: "relative", flexShrink: 0, overflow: "hidden" }}>
       {error && (
         <div ref={fallbackRef} style={{ inset:0, position:"absolute", width:"100%", height:"100%" }} />
       )}
