@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Copy, Check, Download, Send, ClipboardList } from "lucide-react";
+import { Copy, Check, Download, Send, ClipboardList, Type, Palette } from "lucide-react";
 import { haptic, openTelegramLink } from "../lib/telegram";
+import AnimationPreview from "./AnimationPreview";
 
 function copyText(text) {
   if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(text);
@@ -65,22 +66,21 @@ function CopyMini({ text }) {
   const [ok, setOk] = useState(false);
   return (
     <button onClick={(e) => { e.stopPropagation(); haptic("light"); copyText(String(text)).then(() => { setOk(true); setTimeout(() => setOk(false), 1200); }); }}
-      style={{ background:"var(--card)", border:"1px solid var(--border)", borderRadius:6, padding:"4px 8px", cursor:"pointer", display:"flex", alignItems:"center", gap:4, color: ok ? "var(--success)" : "var(--hint)", fontSize:11, fontWeight:600, flexShrink:0 }}>
+      style={{ background:"var(--card)", border:"1px solid var(--border)", borderRadius:6, padding:"5px 9px", cursor:"pointer", display:"flex", alignItems:"center", gap:4, color: ok ? "var(--success)" : "var(--hint)", fontSize:11, fontWeight:600, flexShrink:0 }}>
       {ok ? <><Check size={11}/> Copied</> : <><Copy size={11}/> Copy</>}
     </button>
   );
 }
 
-// One line: label, value, and its own copy button
 function Field({ label, value, swatch }) {
   if (value === undefined || value === null || value === "") return null;
   return (
-    <div className="row-between" style={{ gap:8, padding:"5px 0" }}>
-      <div className="row" style={{ gap:8, minWidth:0, flex:1 }}>
-        {swatch && <div style={{ width:20, height:20, borderRadius:5, background:swatch, border:"2px solid var(--border)", flexShrink:0 }} />}
+    <div className="row-between" style={{ gap:8, padding:"7px 10px", background:"rgba(255,255,255,0.04)", borderRadius:10, marginTop:6 }}>
+      <div className="row" style={{ gap:10, minWidth:0, flex:1 }}>
+        {swatch && <div style={{ width:28, height:28, borderRadius:7, background:swatch, border:"2px solid var(--border)", flexShrink:0 }} />}
         <div style={{ minWidth:0 }}>
           <div style={{ fontSize:10, color:"var(--hint)" }}>{label}</div>
-          <div style={{ fontSize:13, fontWeight:700, wordBreak:"break-word", fontFamily: swatch ? "monospace" : undefined, userSelect:"text" }}>{value}</div>
+          <div style={{ fontSize:14, fontWeight:700, wordBreak:"break-word", fontFamily: swatch ? "monospace" : undefined, userSelect:"text" }}>{value}</div>
         </div>
       </div>
       <CopyMini text={value} />
@@ -88,73 +88,109 @@ function Field({ label, value, swatch }) {
   );
 }
 
+function Section({ icon: Icon, title, children }) {
+  return (
+    <div style={{ marginTop:12 }}>
+      <div style={{ fontSize:10, fontWeight:800, color:"var(--accent)", letterSpacing:".08em", display:"flex", alignItems:"center", gap:5 }}>
+        <Icon size={11}/> {title}
+      </div>
+      {children}
+    </div>
+  );
+}
+
 export default function OrderBrief({ order }) {
   const items = order.items || [];
   const u = order.user || {};
+  const hasBrand = order.logo_name || order.logo_symbol || (order.add_username && order.tg_username);
+
   return (
-    <div className="card" style={{ border:"1px solid rgba(var(--accent-rgb),0.3)" }}>
-      <div className="row-between" style={{ marginBottom:10 }}>
-        <div style={{ fontWeight:800, fontSize:13, display:"flex", alignItems:"center", gap:6 }}>
-          <ClipboardList size={15} color="var(--accent)"/> Design brief
+    <>
+      {/* Order-level card */}
+      <div className="card" style={{ border:"1px solid rgba(var(--accent-rgb),0.3)" }}>
+        <div className="row-between" style={{ marginBottom:10 }}>
+          <div style={{ fontWeight:800, fontSize:13, display:"flex", alignItems:"center", gap:6 }}>
+            <ClipboardList size={15} color="var(--accent)"/> Design brief · {items.length} design{items.length === 1 ? "" : "s"}
+          </div>
+          <CopyPill text={fullBrief(order)} label="Copy full brief" />
         </div>
-        <CopyPill text={fullBrief(order)} label="Copy full brief" />
+        <div style={{ display:"flex", flexWrap:"wrap", gap:6 }}>
+          {u.username && (
+            <button className="btn btn-secondary" style={{ padding:"6px 10px", fontSize:11 }}
+              onClick={() => openTelegramLink(`https://t.me/${u.username}`)}>
+              <Send size={12}/> Chat @{u.username}
+            </button>
+          )}
+          {order.logo_file_url && (
+            <a className="btn btn-secondary" style={{ padding:"6px 10px", fontSize:11, textDecoration:"none" }}
+              href={order.logo_file_url} target="_blank" rel="noreferrer">
+              <Download size={12}/> Logo file ({fileExt(order.logo_file_url)})
+            </a>
+          )}
+        </div>
+        {hasBrand && (
+          <Section icon={Type} title="BRAND TEXT">
+            <Field label="Brand name" value={order.logo_name} />
+            <Field label="Symbol / initials" value={order.logo_symbol} />
+            {order.add_username && <Field label="Username on pack" value={order.tg_username ? `@${order.tg_username}` : ""} />}
+          </Section>
+        )}
       </div>
 
-      <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:6 }}>
-        {u.username && (
-          <button className="btn btn-secondary" style={{ padding:"6px 10px", fontSize:11 }}
-            onClick={() => openTelegramLink(`https://t.me/${u.username}`)}>
-            <Send size={12}/> Chat @{u.username}
-          </button>
-        )}
-        {order.logo_file_url && (
-          <a className="btn btn-secondary" style={{ padding:"6px 10px", fontSize:11, textDecoration:"none" }}
-            href={order.logo_file_url} target="_blank" rel="noreferrer">
-            <Download size={12}/> Logo file ({fileExt(order.logo_file_url)})
-          </a>
-        )}
-      </div>
-
-      {(order.logo_name || order.logo_symbol || (order.add_username && order.tg_username)) && (
-        <div style={{ borderTop:"1px solid var(--border)", marginTop:6, paddingTop:6 }}>
-          <div style={{ fontSize:10, fontWeight:800, color:"var(--accent)", letterSpacing:".08em" }}>BRAND TEXT</div>
-          <Field label="Brand name" value={order.logo_name} />
-          <Field label="Symbol / initials" value={order.logo_symbol} />
-          {order.add_username && <Field label="Username on pack" value={order.tg_username ? `@${order.tg_username}` : ""} />}
-        </div>
-      )}
-
+      {/* One container per design */}
       {items.map((it, i) => {
         const d = it.designs || {};
         const texts = it.text_values || [];
+        const hasColors = it.primary_color || it.secondary_color || (it.extra_colors || []).length > 0;
         return (
-          <div key={i} style={{ borderTop:"1px solid var(--border)", marginTop:8, paddingTop:8 }}>
-            <div className="row-between" style={{ gap:8 }}>
-              <div style={{ minWidth:0 }}>
-                <div style={{ fontWeight:700, fontSize:12 }}>
-                  {i + 1}. {d.name || "Design"} {d.custom_id ? <span style={{ color:"var(--accent)", fontFamily:"monospace" }}>#{d.custom_id}</span> : null}
-                </div>
-                {it.is_voucher_free && <div style={{ fontSize:10, color:"#FFD700", fontWeight:700 }}>FREE (voucher)</div>}
+          <div key={i} className="card" style={{ border:"1px solid var(--border)" }}>
+            <div style={{ fontSize:10, fontWeight:800, color:"var(--hint)", letterSpacing:".08em", marginBottom:8 }}>
+              DESIGN {i + 1} OF {items.length}
+            </div>
+
+            <div className="row" style={{ gap:12, alignItems:"flex-start" }}>
+              <div style={{ width:96, height:96, borderRadius:12, overflow:"hidden", background:"var(--bg)", border:"1px solid var(--border)", flexShrink:0 }}>
+                {d.file_url
+                  ? <AnimationPreview url={d.file_url} fileType={d.file_type} size="96px" autoplay loop />
+                  : <div style={{ height:"100%", display:"flex", alignItems:"center", justifyContent:"center", color:"var(--hint)", fontSize:11 }}>No preview</div>}
               </div>
-              <div className="row" style={{ gap:6, flexShrink:0 }}>
-                {d.file_url && (
-                  <a className="btn btn-secondary" style={{ padding:"6px 10px", fontSize:11, textDecoration:"none" }}
-                    href={d.file_url} target="_blank" rel="noreferrer">
-                    <Download size={12}/> {fileExt(d.file_url)}
-                  </a>
-                )}
-                <CopyPill text={designBrief(it, i + 1)} label="All" />
+              <div style={{ minWidth:0, flex:1 }}>
+                <div style={{ fontWeight:800, fontSize:15, wordBreak:"break-word" }}>{d.name || "Design"}</div>
+                {it.is_voucher_free && <div style={{ fontSize:10, color:"#FFD700", fontWeight:700, marginTop:2 }}>FREE (voucher)</div>}
+                <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginTop:8 }}>
+                  {d.custom_id && <CopyPill text={String(d.custom_id)} label={`ID #${d.custom_id}`} />}
+                  {d.id && <CopyPill text={String(d.id)} label="UUID" />}
+                  {d.file_url && (
+                    <a className="btn btn-secondary" style={{ padding:"6px 10px", fontSize:11, textDecoration:"none" }}
+                      href={d.file_url} target="_blank" rel="noreferrer">
+                      <Download size={12}/> {fileExt(d.file_url)}
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
 
-            {texts.map((tv, j) => <Field key={j} label={tv.name || `Text ${j + 1}`} value={tv.value} />)}
-            {it.custom_text && !texts.length && <Field label="Text" value={it.custom_text} />}
-            <Field label="Primary color" value={it.primary_color} swatch={it.primary_color} />
-            <Field label="Secondary color" value={it.secondary_color} swatch={it.secondary_color} />
-            {(it.extra_colors || []).map((c, ci) => <Field key={ci} label={`Extra color ${ci + 1}`} value={c} swatch={c} />)}
+            {(texts.length > 0 || it.custom_text) && (
+              <Section icon={Type} title="TEXT">
+                {texts.map((tv, j) => <Field key={j} label={tv.name || `Text ${j + 1}`} value={tv.value} />)}
+                {it.custom_text && !texts.length && <Field label="Text" value={it.custom_text} />}
+              </Section>
+            )}
+
+            {hasColors && (
+              <Section icon={Palette} title="COLORS">
+                <Field label="Primary" value={it.primary_color} swatch={it.primary_color} />
+                <Field label="Secondary" value={it.secondary_color} swatch={it.secondary_color} />
+                {(it.extra_colors || []).map((c, ci) => <Field key={ci} label={`Extra ${ci + 1}`} value={c} swatch={c} />)}
+              </Section>
+            )}
+
+            <div style={{ marginTop:12 }}>
+              <CopyPill text={designBrief(it, i + 1)} label="Copy everything for this design" />
+            </div>
           </div>
         );
       })}
-    </div>
+    </>
   );
 }
