@@ -1126,3 +1126,23 @@ html[data-theme="christmas"] .tp { background:#fff; border-radius:50%; box-shado
 html[data-theme="valentine"] .tp { animation-name:tpRise; top:auto; bottom:0; width:auto; height:auto; font-size:calc(14px * var(--s)); color:#FF3D8A; }
 html[data-theme="valentine"] .tp::before { content:"\2665"; }
 html[data-theme="lights"] .tp { animation-name:tpRise; top:auto; bottom:0; border-radius:50%; background:radial-gradient(circle,#FFE08A,#FFB020 55%,transparent 72%); }
+
+/* ===== Home rows ===== */
+.hr-wrap { margin: 2px 0 6px; }
+.hr-section { margin-bottom: 14px; animation: pageEnter var(--dur-slow) var(--ease-out) both; }
+.hr-title { display:flex; align-items:center; gap:6px; font-size:13px; font-weight:800; margin:0 2px 8px; }
+.hr-title svg { color: var(--accent); }
+.hr-row { display:flex; gap:10px; overflow-x:auto; padding:2px 2px 6px; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; }
+.hr-tile { position:relative; flex:0 0 112px; border-radius:16px; background:var(--card); border:1px solid var(--border); box-shadow:var(--shadow); overflow:hidden; cursor:pointer; scroll-snap-align:start; -webkit-tap-highlight-color:transparent; transition: transform var(--dur-fast) var(--ease-spring), border-color var(--dur-med) ease; }
+.hr-tile:active { transform: scale(0.96); }
+.hr-tile.on { border-color: rgba(var(--accent-rgb),0.6); box-shadow: 0 0 16px rgba(var(--accent-rgb),0.25); }
+.hr-big { flex-basis: 78%; max-width: 280px; background: linear-gradient(160deg, rgba(var(--accent-rgb),0.14), rgba(var(--accent2-rgb),0.14)); }
+.hr-anim { aspect-ratio:1; background:rgba(0,0,0,0.18); }
+.hr-info { padding:7px 9px 9px; }
+.hr-name { font-size:11px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.hr-big .hr-name { font-size:13px; }
+.hr-price { font-size:12px; font-weight:800; color:var(--accent); }
+.hr-add { position:absolute; top:6px; right:6px; width:24px; height:24px; border-radius:50%; border:none; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,0.55); color:#fff; backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); cursor:pointer; transition: transform var(--dur-fast) var(--ease-spring), background var(--dur-med) ease; }
+.hr-add:active { transform: scale(0.8); }
+.hr-tile.on .hr-add { background: var(--accent); color:#000; }
+html[data-gfx="low"] .hr-section { animation:none; }

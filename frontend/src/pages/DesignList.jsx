@@ -5,6 +5,7 @@ import { getDesigns, getCategories, getOrders, getAppSettings, getMyVouchers, ge
 import { useApp } from "../context/AppContext";
 import { haptic, openTelegramLink } from "../lib/telegram";
 import AnimationPreview from "../components/AnimationPreview";
+import HomeRows from "../components/HomeRows";
 import FullscreenPreview from "../components/FullscreenPreview";
 import CartBar from "../components/CartBar";
 import GiveawayBanner from "../components/GiveawayBanner";
@@ -531,6 +532,11 @@ export default function DesignList() {
               opacity: Math.min(pullDist / PULL_THRESHOLD, 1),
             }} />
           </div>
+        )}
+
+        {!loading && !hasActiveFilter && !showFavOnly && (
+          <HomeRows designs={designs} favIds={favIds} recent={recentDesigns} price={price} isInCart={isInCart}
+            onOpen={(d) => { haptic("light"); setPreviewDesign(d); recordRecentlyViewed(d.id); }} onToggle={toggleDesign} />
         )}
 
         {loading ? (
