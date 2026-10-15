@@ -708,7 +708,7 @@ html, body, #root {
 .design-card.selected { box-shadow: var(--glow-accent), var(--shadow); }
 .design-card-check { animation: checkPop 0.3s var(--ease-spring) both; }
 @keyframes checkPop { from { transform: scale(0) rotate(-90deg); } to { transform: none; } }
-html[data-gfx="low"] *, html[data-gfx="low"] *::before, html[data-gfx="low"] *::after {
+html[data-gfx="low"] :not(svg):not(svg *):not(canvas), html[data-gfx="low"] :not(svg):not(svg *):not(canvas)::before, html[data-gfx="low"] :not(svg):not(svg *):not(canvas)::after {
   animation-duration: 0.01ms !important;
   animation-delay: 0ms !important;
   transition-duration: 0.01ms !important;
@@ -1201,7 +1201,7 @@ html[data-gfx="low"] .refresh-spin { animation-duration: 1s !important; }
 
 /* ===== Performance fixes ===== */
 /* Low: infinite animations must not loop at 0.01ms (this froze or stuttered Lottie) */
-html[data-gfx="low"] *, html[data-gfx="low"] *::before, html[data-gfx="low"] *::after { animation-iteration-count: 1 !important; }
+html[data-gfx="low"] :not(svg):not(svg *):not(canvas), html[data-gfx="low"] :not(svg):not(svg *):not(canvas)::before, html[data-gfx="low"] :not(svg):not(svg *):not(canvas)::after { animation-iteration-count: 1 !important; }
 html[data-gfx="low"] .spinner, html[data-gfx="low"] .refresh-spin,
 html[data-gfx="low"] .loading-dots span, html[data-gfx="low"] .dot-loader-circle, html[data-gfx="low"] .dot-loader-shadow {
   animation-iteration-count: infinite !important; animation-duration: 1s !important;
