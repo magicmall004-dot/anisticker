@@ -128,6 +128,19 @@ export default function OrderBrief({ order }) {
             </a>
           )}
         </div>
+        {(order.primary_color || order.secondary_color) && (
+          <Section icon={Palette} title="BRAND COLORS">
+            <Field label="Primary" value={order.primary_color} swatch={order.primary_color} />
+            <Field label="Secondary" value={order.secondary_color} swatch={order.secondary_color} />
+          </Section>
+        )}
+        {order.logo_file_url && ["png","jpg","jpeg","webp","gif","svg"].includes(fileExt(order.logo_file_url).toLowerCase()) && (
+          <Section icon={Type} title="LOGO">
+            <a href={order.logo_file_url} target="_blank" rel="noreferrer">
+              <img src={order.logo_file_url} alt="" style={{ width:80, height:80, objectFit:"contain", borderRadius:10, background:"var(--bg)", border:"1px solid var(--border)", marginTop:6 }} />
+            </a>
+          </Section>
+        )}
         {hasBrand && (
           <Section icon={Type} title="BRAND TEXT">
             <Field label="Brand name" value={order.logo_name} />
