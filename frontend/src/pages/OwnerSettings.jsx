@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import ThemePicker from "../components/ThemePicker";
 import { Save, RefreshCw, Home, Upload, X, Wrench } from "lucide-react";
 import { cloudSet, cloudGet, getStoredEmojiId, setStoredEmojiId, DEFAULT_EMOJI_ID, hapticNotification, addToHomeScreen } from "../lib/telegram";
 import { getAppSettings, updateAppSettings, uploadDesignFile, uploadSettingFile } from "../lib/api";
@@ -53,6 +54,7 @@ export default function OwnerSettings() {
   return (
     <div className="page-body">
       <div className="section-title"><Wrench size={14} style={{display:"inline",verticalAlign:"-2px"}}/> Maintenance Mode</div>
+      <ThemePicker />
       <div className="card" style={{ border:maintenance.maintenance_mode==="true"?"1px solid rgba(239,68,68,0.4)":"1px solid rgba(255,255,255,0.07)" }}>
         <div className="row-between" style={{ marginBottom:12 }}>
           <div>

@@ -1,8 +1,8 @@
-// Seasonal themes: picked by date, with a manual override for testing.
-// Test in a desktop browser: open the app URL with ?theme=thingyan
-// (also christmas, valentine, lights). Use ?theme=off to reset.
+// Theme priority: ?theme= preview (this browser) > owner setting > date.
+// Owner setting values: "auto" | "off" | thingyan | christmas | valentine | lights
 const KNOWN = ["thingyan", "christmas", "valentine", "lights"];
-const FORCE = null; // e.g. "thingyan" to force a theme for everyone
+const root = document.documentElement;
+let theme = null, box = null, current = 0;
 
 function auto() {
   const d = new Date();
@@ -13,31 +13,26 @@ function auto() {
   return null;
 }
 
-function pick() {
+function resolve() {
   try {
     const q = new URLSearchParams(location.search).get("theme");
     if (q === "off") localStorage.removeItem("themeOverride");
     else if (KNOWN.includes(q)) localStorage.setItem("themeOverride", q);
     const o = localStorage.getItem("themeOverride");
     if (KNOWN.includes(o)) return o;
+    const server = localStorage.getItem("themeServer") || "auto";
+    if (server === "off") return null;
+    if (KNOWN.includes(server)) return server;
   } catch (e) {}
-  return FORCE || auto();
+  return auto();
 }
-
-const theme = pick();
-const root = document.documentElement;
-if (theme) root.dataset.theme = theme;
-
-let box = null;
-let current = 0;
 
 function sync() {
   const gfx = root.dataset.gfx;
   const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   const n = !theme || calm ? 0 : gfx === "ultra" ? 22 : (gfx === "high" || !gfx) ? 14 : 0;
-  if (n === current) return;
-  current = n;
   if (box) { box.remove(); box = null; }
+  current = n;
   if (!n) return;
   box = document.createElement("div");
   box.className = "tp-box";
@@ -55,5 +50,19 @@ function sync() {
   document.body.appendChild(box);
 }
 
-sync();
-new MutationObserver(sync).observe(root, { attributes: true, attributeFilter: ["data-gfx"] });
+function render() {
+  const next = resolve();
+  if (next) root.dataset.theme = next; else delete root.dataset.theme;
+  const changed = next !== theme;
+  theme = next;
+  if (changed || !box) sync();
+}
+
+// Called after the app settings load (value comes from the owner panel)
+export function applyTheme(value) {
+  try { localStorage.setItem("themeServer", value || "auto"); } catch (e) {}
+  render();
+}
+
+render();
+new MutationObserver(() => { if (root.dataset.gfx) sync(); }).observe(root, { attributes: true, attributeFilter: ["data-gfx"] });

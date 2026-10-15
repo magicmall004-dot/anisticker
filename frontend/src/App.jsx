@@ -12,6 +12,7 @@ import MaintenanceScreen from "./components/MaintenanceScreen";
 import OnboardingScreen  from "./components/OnboardingScreen";
 import JoinChannelScreen from "./components/JoinChannelScreen";
 import { getAppSettings, checkMembership } from "./lib/api";
+import { applyTheme } from "./lib/theme";
 import { cloudGet, cloudSet, tgReady } from "./lib/telegram";
 
 import DesignList     from "./pages/DesignList";
@@ -58,6 +59,7 @@ function ProtectedRoute({ children }) {
 
   useEffect(() => {
     getAppSettings().then(async (s) => {
+      try { applyTheme(s.app_theme); } catch (e) {}
       if (s.maintenance_mode==="true") setMaintenance({ message:s.maintenance_message, tgs:s.maintenance_tgs });
       if (s.onboarding_enabled==="true") {
         try {
