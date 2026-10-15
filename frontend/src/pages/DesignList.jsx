@@ -5,6 +5,7 @@ import { getDesigns, getCategories, getOrders, getAppSettings, getMyVouchers, ge
 import { useApp } from "../context/AppContext";
 import { haptic, openTelegramLink } from "../lib/telegram";
 import AnimationPreview from "../components/AnimationPreview";
+import BrandPull from "../components/BrandPull";
 import HomeRows from "../components/HomeRows";
 import FullscreenPreview from "../components/FullscreenPreview";
 import CartBar from "../components/CartBar";
@@ -527,10 +528,7 @@ export default function DesignList() {
 
         {pullDist > 0 && (
           <div style={{ display:"flex",justifyContent:"center",alignItems:"center",height:pullDist,transition: pulling.current ? "none" : "height 0.2s ease" }}>
-            <RefreshCw size={18} color="var(--accent)" style={{
-              transform: `rotate(${Math.min(pullDist / PULL_THRESHOLD, 1) * 360}deg)`,
-              opacity: Math.min(pullDist / PULL_THRESHOLD, 1),
-            }} />
+            <BrandPull progress={Math.min(pullDist / PULL_THRESHOLD, 1)} />
           </div>
         )}
 

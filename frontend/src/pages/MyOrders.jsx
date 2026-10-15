@@ -5,6 +5,8 @@ import { getMyOrders, cancelOrder, getPaymentMethods } from "../lib/api";
 import { formatPrice } from "../lib/utils";
 import { showBackButton, hideBackButton, hapticNotification, haptic, showConfirm } from "../lib/telegram";
 import AnimationPreview from "../components/AnimationPreview";
+import OrderTimeline from "../components/OrderTimeline";
+import api from "../lib/api";
 
 function CopyBtn({ text }) {
   const [copied, setCopied] = useState(false);
@@ -100,7 +102,7 @@ function OrderDetail({ order, onBack, onCancelled, paymentMethods }) {
 
         {/* Progress */}
         <div className="card-glow">
-          <OrderProgress status={order.status}/>
+          <OrderTimeline order={order}/>
           <div className="divider"/>
           <div className="row-between" style={{ marginTop:10 }}>
             <div style={{ fontSize:12,color:"var(--hint)" }}>{new Date(order.created_at).toLocaleString()}</div>
@@ -299,6 +301,22 @@ export default function MyOrders() {
     try { setOrders(await getMyOrders()); }
     finally { setLoading(false); }
   }
+
+  // Live status: re-check an open pending/accepted order every 15 seconds
+  useEffect(() => {
+    if (!detail || !["pending", "accepted"].includes(detail.status)) return;
+    const t = setInterval(() => {
+      api.get(`/orders/${detail.id}`).then((r) => {
+        const f = r.data;
+        if (f && f.status !== detail.status) {
+          hapticNotification("success");
+          setDetail(f);
+          setOrders((prev) => prev.map((o) => (o.id === f.id ? f : o)));
+        }
+      }).catch(() => {});
+    }, 15000);
+    return () => clearInterval(t);
+  }, [detail]);
 
   if (detail) return <OrderDetail order={detail} onBack={() => setDetail(null)} onCancelled={() => { load(); setDetail(null); }} paymentMethods={paymentMethods}/>;
 
