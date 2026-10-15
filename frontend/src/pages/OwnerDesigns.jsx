@@ -352,6 +352,13 @@ export default function OwnerDesigns() {
         </div>
 
         <div className="field">
+          <div className="label">Notice for customers (requirements, notes)</div>
+          <textarea className="input" rows={4} value={editing.notice || ""}
+            onChange={(e) => setEditing({...editing, notice: e.target.value})}
+            placeholder="e.g. Send your logo as PNG. Delivery takes 1-2 days." />
+        </div>
+
+        <div className="field">
           <div className="label">Type</div>
           <div className="row" style={{ gap:10 }}>
             {["regular","adaptive","fixed","premium"].map((t) => (

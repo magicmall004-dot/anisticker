@@ -653,6 +653,7 @@ export default function DesignList() {
                     <div style={{ display:"flex", alignItems:"center", gap:4, flexWrap:"wrap", marginBottom:2 }}>
                       {design.category_name && <div className="design-card-cat" style={{ marginBottom:0 }}>{design.category_name}</div>}
                       <TypeBadge type={design.type} />
+                      {design.notice && design.notice.trim() && <span className="notice-dot" title="Has notes">ℹ</span>}
                     </div>
                     <div className="row" style={{ gap:6, alignItems:"baseline" }}>
                       <PriceTag basePrice={price(design)} discountAmount={discount} isFree={isFree} />

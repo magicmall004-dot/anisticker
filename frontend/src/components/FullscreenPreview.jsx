@@ -66,6 +66,13 @@ export default function FullscreenPreview({ design, onClose, onToggle, selected 
           </div>
         )}
 
+        {design.notice && design.notice.trim() && (
+          <div className="notice-card">
+            <div className="notice-title">ℹ️ Please read</div>
+            <div className="notice-text">{design.notice}</div>
+          </div>
+        )}
+
         <div className="row-between" style={{ marginTop:14 }}>
           <div>
             <div style={{ fontSize:11, color:"var(--hint)" }}>Price</div>
