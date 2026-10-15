@@ -574,6 +574,23 @@ export default function OwnerDesigns() {
     );
   }
 
+  const [dq, setDq] = useState("");
+  const [fCat, setFCat] = useState("all");
+  const [fType, setFType] = useState("all");
+  const [fPack, setFPack] = useState("all");
+  const _n = dq.trim().toLowerCase().replace(/^#/, "");
+  const typeList = Array.from(new Set(designs.map((d) => d.type).filter(Boolean)));
+  const filteredDesigns = designs.filter((d) => {
+    if (_n && !(String(d.custom_id || "").toLowerCase().includes(_n) || String(d.id).toLowerCase().includes(_n) || (d.name || "").toLowerCase().includes(_n))) return false;
+    if (fCat === "none" ? d.category_id : (fCat !== "all" && d.category_id !== fCat)) return false;
+    if (fType !== "all" && d.type !== fType) return false;
+    if (fPack === "in" && !d.custom_emoji_id) return false;
+    if (fPack === "out" && d.custom_emoji_id) return false;
+    return true;
+  });
+  const hasFilter = _n || fCat !== "all" || fType !== "all" || fPack !== "all";
+  const chip = (on) => ({ padding:"6px 12px", borderRadius:99, fontSize:11, fontWeight:700, border:"none", cursor:"pointer", whiteSpace:"nowrap", flexShrink:0, background:on?"rgba(4,217,255,0.15)":"rgba(255,255,255,0.06)", color:on?"var(--accent)":"var(--hint)" });
+
   return (
     <div className="page-body">
       <button className="btn btn-primary btn-full" onClick={() => { savedScrollRef.current = window.scrollY; setEditing({...EMPTY}); }}>
@@ -588,14 +605,36 @@ export default function OwnerDesigns() {
         {cleaning ? "Cleaning up…" : "🧹 Remove Orphaned Emoji Stickers"}
       </button>
 
+      <input className="input" value={dq} onChange={(e) => setDq(e.target.value)} placeholder="Search ID, #custom ID or name…" style={{ marginTop:10 }} />
+      <div className="scroll-row" style={{ marginTop:8 }}>
+        <button style={chip(fCat==="all")} onClick={() => setFCat("all")}>All categories</button>
+        {categories.map((c) => <button key={c.id} style={chip(fCat===c.id)} onClick={() => setFCat(fCat===c.id?"all":c.id)}>{c.name}</button>)}
+        <button style={chip(fCat==="none")} onClick={() => setFCat(fCat==="none"?"all":"none")}>No category</button>
+      </div>
+      <div className="scroll-row" style={{ marginTop:6 }}>
+        <button style={chip(fType==="all")} onClick={() => setFType("all")}>All types</button>
+        {typeList.map((t) => <button key={t} style={chip(fType===t)} onClick={() => setFType(fType===t?"all":t)}>{t}</button>)}
+      </div>
+      <div className="scroll-row" style={{ marginTop:6 }}>
+        <button style={chip(fPack==="all")} onClick={() => setFPack("all")}>Any pack status</button>
+        <button style={chip(fPack==="in")} onClick={() => setFPack(fPack==="in"?"all":"in")}>🟢 In emoji pack</button>
+        <button style={chip(fPack==="out")} onClick={() => setFPack(fPack==="out"?"all":"out")}>🔴 Not in pack</button>
+      </div>
+      <div className="row-between" style={{ fontSize:11, color:"var(--hint)", margin:"8px 2px 2px" }}>
+        <span>{filteredDesigns.length} of {designs.length} designs</span>
+        {hasFilter && <button className="btn btn-ghost" style={{ padding:"2px 8px", fontSize:11 }} onClick={() => { setDq(""); setFCat("all"); setFType("all"); setFPack("all"); }}>Clear filters</button>}
+      </div>
+
       {loading ? (
         <div style={{ display:"flex", justifyContent:"center", padding:32 }}>
           <div className="spinner" />
         </div>
       ) : designs.length === 0 ? (
         <div className="empty-state">No designs yet</div>
+      ) : filteredDesigns.length === 0 ? (
+        <div className="empty-state">No designs match these filters</div>
       ) : (
-        designs.map((d) => (
+        filteredDesigns.map((d) => (
           <div key={d.id} className="card">
             <div className="row-between">
               <div className="row" style={{ gap:10 }}>
