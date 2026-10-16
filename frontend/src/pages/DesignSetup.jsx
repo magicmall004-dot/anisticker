@@ -197,18 +197,6 @@ export default function DesignSetup() {
         </div>
 
         {/* Per-design */}
-        {cart.some((i) => i.design.notice && i.design.notice.trim()) && (
-          <div className="card notice-card" style={{ marginBottom:4 }}>
-            <div className="notice-title">ℹ️ Notes from the shop</div>
-            {cart.filter((i) => i.design.notice && i.design.notice.trim()).map((i) => (
-              <div key={i.cartItemId} style={{ marginTop:8 }}>
-                <div style={{ fontSize:11, fontWeight:800, color:"#FFD700" }}>{i.design.name || "Design"}{i.design.custom_id ? ` #${i.design.custom_id}` : ""}</div>
-                <div className="notice-text">{i.design.notice}</div>
-              </div>
-            ))}
-          </div>
-        )}
-
         <div className="section-title">Your Designs ({cart.length})</div>
         {cart.map((item) => {
           const isExpanded = expandedId === item.cartItemId;
