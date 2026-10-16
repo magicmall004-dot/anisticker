@@ -224,7 +224,7 @@ export default function DesignSetup() {
                 </div>
               </div>
 
-              {item.design.type === "premium" && item.design.notice && item.design.notice.trim() && (
+              {item.design.notice && item.design.notice.trim() && (
                 <div className="ds-note">
                   <div className="notice-title">ℹ️ Please read</div>
                   <div className="notice-text">{item.design.notice}</div>
