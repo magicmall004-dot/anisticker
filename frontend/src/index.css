@@ -1249,3 +1249,7 @@ html[data-gfx="balanced"] .page-header-premium, html[data-gfx="low"] .page-heade
   background: rgba(20,20,28,0.78) !important;
   backdrop-filter: none; -webkit-backdrop-filter: none;
 }
+
+/* ===== Nav spacing: last items must scroll clear of the floating nav ===== */
+.design-grid { padding-bottom: calc(110px + var(--safe-bottom)); }
+.page-body { padding-bottom: calc(100px + var(--safe-bottom)); }
