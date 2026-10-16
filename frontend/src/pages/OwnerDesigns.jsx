@@ -158,6 +158,37 @@ export default function OwnerDesigns() {
   const [uploading,       setUploading]       = useState(false);
   const [requestingBot,   setRequestingBot]   = useState(false);
   const [botRequestSent,  setBotRequestSent]  = useState(false);
+  const botBase = useRef(null);
+  const [botLeft, setBotLeft] = useState(600);
+  // After "Send via Bot": check every 3s and update by itself when the file arrives
+  useEffect(() => {
+    if (!botRequestSent || !editing || !editing.id) return;
+    const id = editing.id;
+    botBase.current = editing.file_url || null;
+    const started = Date.now();
+    setBotLeft(600);
+    const t = setInterval(async () => {
+      const left = 600 - Math.floor((Date.now() - started) / 1000);
+      if (left <= 0) { setBotRequestSent(false); return; }
+      setBotLeft(left);
+      try {
+        const fresh = await getDesign(id);
+        if ((fresh.file_url || null) !== botBase.current) {
+          setEditing((prev) => (prev && prev.id === id ? {
+            ...prev,
+            file_url: fresh.file_url,
+            file_type: fresh.file_type,
+            custom_emoji_id: fresh.custom_emoji_id,
+            emoji_sticker_file_id: fresh.emoji_sticker_file_id,
+            emoji_pack_id: fresh.emoji_pack_id,
+          } : prev));
+          setBotRequestSent(false);
+          hapticNotification("success");
+        }
+      } catch (e) { /* try again on the next tick */ }
+    }, 3000);
+    return () => clearInterval(t);
+  }, [botRequestSent, editing && editing.id]);
   const [detectedColors,  setDetectedColors]  = useState([]);
   const [dq, setDq] = useState("");
   const [fCat, setFCat] = useState("all");
@@ -406,6 +437,7 @@ export default function OwnerDesigns() {
                 <div style={{ fontSize:12, color:"var(--text)", marginBottom:8 }}>
                   Now forward the file directly to your bot in Telegram (don't save it to your device first — send it straight from wherever you got it).
                 </div>
+                <div style={{ fontSize:11, color:"var(--hint)", marginBottom:8 }}>⏳ Waiting for your file… checking automatically ({Math.floor(botLeft/60)}:{String(botLeft%60).padStart(2,"0")} left)</div>
                 <button className="btn btn-primary btn-full" style={{ fontSize:12, padding:8 }} onClick={handleRefreshFromBot}>
                   I sent it — refresh
                 </button>
