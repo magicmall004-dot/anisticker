@@ -32,10 +32,11 @@ export default function DesignSetup() {
 
   useEffect(() => {
     showBackButton(() => navigate(-1));
-    return hideBackButton;
+    return () => { hideBackButton(); hideMainButton(); };
   }, []);
 
   useEffect(() => {
+    if (cart.length === 0) { hideMainButton(); return; }
     if (canProceed()) {
       showMainButton(`Proceed to Payment · ${formatPrice(total)}`, proceed);
     } else {
