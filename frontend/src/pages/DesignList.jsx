@@ -352,6 +352,7 @@ export default function DesignList() {
               autoplay
               loop={false}
               fit="meet"
+              stopAt={220}
             />
           </div>
         </div>

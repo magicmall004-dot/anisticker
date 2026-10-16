@@ -69,7 +69,7 @@ const FALLBACK_URL = "https://raw.githubusercontent.com/magicmall004-dot/anistic
  *  loop      – boolean, default true
  *  play      – boolean prop to trigger play externally
  */
-export default function AnimationPreview({ url, fileType, size = "100%", autoplay = false, loop = true, play = false, fit = "slice", tintColor = null }) {
+export default function AnimationPreview({ url, fileType, size = "100%", autoplay = false, loop = true, play = false, fit = "slice", tintColor = null, stopAt = null }) {
   const containerRef = useRef(null);
   const fallbackRef = useRef(null);
   const animRef = useRef(null);
@@ -110,6 +110,14 @@ export default function AnimationPreview({ url, fileType, size = "100%", autopla
           animationData: animData,
           rendererSettings: { preserveAspectRatio: `xMidYMid ${fit}` },
         });
+
+        if (stopAt) {
+          // play from the start to a chosen frame, then hold that frame
+          const a = animRef.current;
+          a.loop = false;
+          if (autoplay) a.playSegments([0, stopAt], true);
+          else a.goToAndStop(stopAt, true);
+        }
 
         setLoading(false);
       } catch (e) {
