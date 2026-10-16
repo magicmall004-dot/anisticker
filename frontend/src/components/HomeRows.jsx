@@ -61,7 +61,6 @@ export default function HomeRows({ designs, favIds, recent, price, isInCart, onO
   return (
     <div className="hr-wrap">
       <Row icon={Crown} title="Premium" items={prem} selectedOf={sel} {...common} />
-      <Row icon={Sparkles} title="Featured" big items={(trending.length >= 3 ? trending : fresh).slice(0, 6)} selectedOf={sel} {...common} />
       <Row icon={Flame} title="Trending" items={trending} selectedOf={sel} {...common} />
       <Row icon={Sparkles} title="New" items={fresh} selectedOf={sel} {...common} />
       <Row icon={Heart} title="Your favorites" items={favs} selectedOf={sel} {...common} />
