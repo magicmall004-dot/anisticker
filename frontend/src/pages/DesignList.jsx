@@ -346,11 +346,11 @@ export default function DesignList() {
         <div className="header-brand" style={{ display:"flex",alignItems:"center",gap:8,flex:1 }}>
           <div style={{ width: "100%", height: 32 }}>
             <AnimationPreview
-              url="https://raw.githubusercontent.com/magicmall004-dot/anisticker/main/LOGO_TEXT.json"
+              url={`${import.meta.env.BASE_URL}LOGO_TEXT.json`}
               fileType="json"
               size="100%"
               autoplay
-              loop
+              loop={false}
               fit="meet"
             />
           </div>
