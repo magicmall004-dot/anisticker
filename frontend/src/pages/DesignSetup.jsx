@@ -236,6 +236,13 @@ export default function DesignSetup() {
                 </div>
               </div>
 
+              {item.design.type === "premium" && item.design.notice && item.design.notice.trim() && (
+                <div className="ds-note">
+                  <div className="notice-title">ℹ️ Please read</div>
+                  <div className="notice-text">{item.design.notice}</div>
+                </div>
+              )}
+
               {/* Expanded content */}
               {isExpanded && (
                 <div style={{ padding:"0 14px 14px", borderTop:"1px solid rgba(255,255,255,0.06)", display:"flex", flexDirection:"column", gap:12 }}>

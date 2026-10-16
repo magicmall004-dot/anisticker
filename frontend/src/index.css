@@ -1231,3 +1231,7 @@ html[data-gfx="low"] .design-premium::after, html[data-gfx="balanced"] .design-p
 .notice-title { font-size: 11px; font-weight: 800; letter-spacing: .04em; color: #FFD700; }
 .notice-text { margin-top: 4px; font-size: 12px; line-height: 1.6; white-space: pre-wrap; word-break: break-word; max-height: 140px; overflow-y: auto; }
 .notice-dot { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; border-radius: 50%; font-size: 9px; font-weight: 800; color: #000; background: #FFD700; }
+
+/* Setup page: notice inside the design card */
+.ds-note { margin: 0 14px 12px; padding: 9px 11px; border-radius: 10px; background: rgba(255,215,0,0.08); border: 1px solid rgba(255,215,0,0.35); }
+.ds-note .notice-text { max-height: none; }
