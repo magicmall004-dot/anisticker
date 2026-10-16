@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Flame, Sparkles, Heart, Clock, Plus, Check } from "lucide-react";
+import { Flame, Sparkles, Heart, Clock, Plus, Check, Crown } from "lucide-react";
 import AnimationPreview from "./AnimationPreview";
 import { formatPrice } from "../lib/utils";
 import { haptic } from "../lib/telegram";
@@ -23,7 +23,7 @@ function Lazy({ design }) {
 
 function Tile({ d, price, selectedOf, onOpen, onToggle, big }) {
   return (
-    <div className={`hr-tile ${big ? "hr-big" : ""} ${selectedOf(d) ? "on" : ""}`} onClick={() => onOpen(d)}>
+    <div className={`hr-tile ${big ? "hr-big" : ""} ${selectedOf(d) ? "on" : ""} ${d.type === "premium" ? "hr-prem" : ""}`} onClick={() => onOpen(d)}>
       <div className="hr-anim"><Lazy design={d} /></div>
       <div className="hr-info">
         <div className="hr-name">{d.name || d.category_name || "Design"}</div>
@@ -54,11 +54,13 @@ export default function HomeRows({ designs, favIds, recent, price, isInCart, onO
   const trending = byCount.filter((d) => (d.order_count || 0) > 0).slice(0, 10);
   const fresh = [...designs].sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)).slice(0, 10);
   const favs = designs.filter((d) => favIds.has(d.id)).slice(0, 10);
+  const prem = designs.filter((d) => d.type === "premium").slice(0, 10);
   const common = { price, onOpen, onToggle };
   const sel = (d) => isInCart(d.id);
 
   return (
     <div className="hr-wrap">
+      <Row icon={Crown} title="Premium" items={prem} selectedOf={sel} {...common} />
       <Row icon={Sparkles} title="Featured" big items={(trending.length >= 3 ? trending : fresh).slice(0, 6)} selectedOf={sel} {...common} />
       <Row icon={Flame} title="Trending" items={trending} selectedOf={sel} {...common} />
       <Row icon={Sparkles} title="New" items={fresh} selectedOf={sel} {...common} />

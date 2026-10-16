@@ -1253,3 +1253,8 @@ html[data-gfx="balanced"] .page-header-premium, html[data-gfx="low"] .page-heade
 /* ===== Nav spacing: last items must scroll clear of the floating nav ===== */
 .design-grid { padding-bottom: calc(110px + var(--safe-bottom)); }
 .page-body { padding-bottom: calc(100px + var(--safe-bottom)); }
+
+/* ===== Premium row ===== */
+.hr-tile.hr-prem { border-color: rgba(255,215,0,0.55); background: linear-gradient(160deg, rgba(255,215,0,0.08), var(--card) 60%); box-shadow: 0 0 0 1px rgba(255,215,0,0.12), 0 4px 16px rgba(255,190,0,0.16); }
+.hr-tile.hr-prem .hr-price { color: #FFD700; }
+.hr-tile.hr-prem.on { border-color: rgba(var(--accent-rgb),0.6); }
