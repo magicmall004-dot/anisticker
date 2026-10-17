@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, Wallet, AlertCircle, Plus } from "lucide-react";
 import { createOrder, getMyBalance, getMyVouchers } from "../lib/api";
@@ -22,6 +22,8 @@ export default function Payment() {
   const [loading,    setLoading]    = useState(true);
   const [cats,       setCats]       = useState([]);
   const [voucherIds, setVoucherIds] = useState(new Set());
+  const placeRef = useRef(null);
+  const busy = useRef(false);
 
   useEffect(() => {
     showBackButton(() => navigate(-1));
@@ -38,9 +40,10 @@ export default function Payment() {
   const canPlace = cart.length > 0 && balance !== null && balance >= total && !placing;
   const insufficient = balance !== null && balance < total;
 
+  placeRef.current = placeOrder;
   useEffect(() => {
     if (canPlace) {
-      showMainButton(`Pay with Balance · ${formatPrice(total)}`, placeOrder, "#04D9FF", "#000000");
+      showMainButton(`Pay with Balance · ${formatPrice(total)}`, () => { if (busy.current) return; busy.current = true; Promise.resolve(placeRef.current()).finally(() => { busy.current = false; }); }, "#04D9FF", "#000000");
     } else {
       hideMainButton();
     }

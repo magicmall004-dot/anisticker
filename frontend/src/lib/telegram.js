@@ -33,10 +33,17 @@ export function showMainButton(text, onClick, color="#04D9FF", textColor="#fffff
     const id = getStoredEmojiId();
     if (id) btn.setParams({ has_shine_effect:true, icon_custom_emoji_id:id });
   } catch(e) {}
+  if (_mainHandler) { try { btn.offClick(_mainHandler); } catch (e) {} }
+  _mainHandler = onClick;
   btn.onClick(onClick);
   btn.show();
 }
-export function hideMainButton() { tg?.MainButton.hide(); }
+let _mainHandler = null;
+export function hideMainButton() {
+  if (!tg) return;
+  if (_mainHandler) { try { tg.MainButton.offClick(_mainHandler); } catch (e) {} _mainHandler = null; }
+  tg.MainButton.hide();
+}
 export function setMainButtonLoading(loading) {
   if (!tg) return;
   if (loading) tg.MainButton.showProgress();
