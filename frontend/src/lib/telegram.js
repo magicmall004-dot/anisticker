@@ -16,12 +16,19 @@ export function isDark()      { return tg?.colorScheme === "dark"; }
 export function themeParams() { return tg?.themeParams || {}; }
 export function closeApp()    { tg?.close(); }
 
+let _backHandler = null;
 export function showBackButton(onClick) {
   if (!tg) return;
+  if (_backHandler) { try { tg.BackButton.offClick(_backHandler); } catch (e) {} }
+  _backHandler = onClick;
   tg.BackButton.onClick(onClick);
   tg.BackButton.show();
 }
-export function hideBackButton() { tg?.BackButton.hide(); }
+export function hideBackButton() {
+  if (!tg) return;
+  if (_backHandler) { try { tg.BackButton.offClick(_backHandler); } catch (e) {} _backHandler = null; }
+  tg.BackButton.hide();
+}
 
 export function showMainButton(text, onClick, color="#04D9FF", textColor="#ffffff") {
   if (!tg) return;
@@ -50,13 +57,20 @@ export function setMainButtonLoading(loading) {
   else tg.MainButton.hideProgress();
 }
 
+let _secondaryHandler = null;
 export function showSecondaryButton(text, onClick) {
   if (!tg?.SecondaryButton) return;
   tg.SecondaryButton.setText(text);
+  if (_secondaryHandler) { try { tg.SecondaryButton.offClick(_secondaryHandler); } catch (e) {} }
+  _secondaryHandler = onClick;
   tg.SecondaryButton.onClick(onClick);
   tg.SecondaryButton.show();
 }
-export function hideSecondaryButton() { tg?.SecondaryButton?.hide(); }
+export function hideSecondaryButton() {
+  if (!tg?.SecondaryButton) return;
+  if (_secondaryHandler) { try { tg.SecondaryButton.offClick(_secondaryHandler); } catch (e) {} _secondaryHandler = null; }
+  tg.SecondaryButton.hide();
+}
 
 export function getStoredEmojiId() {
   try { return localStorage.getItem("mm_emoji_id") || DEFAULT_EMOJI_ID; } catch { return DEFAULT_EMOJI_ID; }
