@@ -1278,3 +1278,7 @@ html[data-gfx="balanced"] .page-header-premium, html[data-gfx="low"] .page-heade
 .ds-dup { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; cursor:pointer; background:rgba(var(--accent-rgb),0.12); border:1px solid rgba(var(--accent-rgb),0.35); color:var(--accent); transition: transform var(--dur-fast) var(--ease-spring); -webkit-tap-highlight-color: transparent; }
 .ds-dup:active { transform: scale(0.85); }
 .ds-copyno { font-size:11px; font-weight:800; color:var(--accent); }
+
+/* ===== Tier badge ===== */
+.tb { display: inline-flex; align-items: center; gap: 3px; margin-left: 4px; vertical-align: -3px; }
+.tb-name { font-size: 9px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--tc); }
