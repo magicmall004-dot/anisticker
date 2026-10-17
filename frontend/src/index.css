@@ -1285,3 +1285,6 @@ html[data-gfx="balanced"] .page-header-premium, html[data-gfx="low"] .page-heade
 
 /* ===== Role badge ===== */
 .rb { display: inline-flex; align-items: center; margin-left: 4px; vertical-align: -3px; }
+
+/* ===== Badges in front of the name ===== */
+.rb, .tb { margin-left: 0; margin-right: 4px; }
