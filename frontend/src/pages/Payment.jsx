@@ -33,10 +33,9 @@ export default function Payment() {
     return () => { hideBackButton(); hideMainButton(); };
   }, []);
 
-  if (cart.length === 0) { navigate("/"); return null; }
 
   const total = cartTotal(user?.role, cats, voucherIds);
-  const canPlace = balance !== null && balance >= total && !placing;
+  const canPlace = cart.length > 0 && balance !== null && balance >= total && !placing;
   const insufficient = balance !== null && balance < total;
 
   useEffect(() => {
@@ -46,6 +45,8 @@ export default function Payment() {
       hideMainButton();
     }
   }, [canPlace, total]);
+
+  if (cart.length === 0) { navigate("/"); return null; }
 
   async function placeOrder() {
     const confirmed = await showConfirm(
