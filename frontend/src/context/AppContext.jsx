@@ -76,6 +76,30 @@ export function AppProvider({ children }) {
     );
   }, []);
 
+  // Duplicate a design in the cart: same colors, but empty text so the customer can type new text
+  const duplicateCartItem = useCallback((cartItemId) => {
+    const newId = `dup_${Date.now()}_${Math.random().toString(36).slice(2,7)}`;
+    setCart((prev) => {
+      const idx = prev.findIndex((i) => i.cartItemId === cartItemId);
+      if (idx < 0) return prev;
+      const src = prev[idx];
+      if (prev.filter((i) => i.design.id === src.design.id).length >= 10) return prev;
+      const copy = {
+        ...src,
+        cartItemId: newId,
+        extraColors: [...(src.extraColors || [])],
+        instantColors: { ...(src.instantColors || {}) },
+        customText: "",
+        textValues: [],
+        instantText: "",
+      };
+      const next = [...prev];
+      next.splice(idx + 1, 0, copy);
+      return next;
+    });
+    return newId;
+  }, []);
+
   const clearCart = useCallback(() => setCart([]), []);
 
   const cartTotal = (role) =>
@@ -87,7 +111,7 @@ export function AppProvider({ children }) {
   return (
     <AppContext.Provider value={{
       user, setUser, authReady,
-      cart, addToCart, removeFromCart, updateCartItem, clearCart,
+      cart, addToCart, removeFromCart, updateCartItem, clearCart, duplicateCartItem,
       cartTotal, isInCart, countInCart,
     }}>
       {children}

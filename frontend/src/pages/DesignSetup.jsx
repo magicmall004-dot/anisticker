@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, Upload, Plus, X, ChevronDown, ChevronUp, Film } from "lucide-react";
+import { ChevronLeft, Upload, Plus, X, ChevronDown, ChevronUp, Film, Copy } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import { uploadLogo, uploadDesignFile } from "../lib/api";
 import { showBackButton, hideBackButton, haptic, showMainButton, hideMainButton } from "../lib/telegram";
@@ -10,7 +10,7 @@ import InstantPreview from "../components/InstantPreview";
 import { formatPrice } from "../lib/utils";
 
 export default function DesignSetup() {
-  const { cart, updateCartItem, removeFromCart, user, cartTotal } = useApp();
+  const { cart, updateCartItem, removeFromCart, user, cartTotal, duplicateCartItem } = useApp();
   const navigate = useNavigate();
 
   // Global brand setup
@@ -200,6 +200,9 @@ export default function DesignSetup() {
         <div className="section-title">Your Designs ({cart.length})</div>
         {cart.map((item) => {
           const isExpanded = expandedId === item.cartItemId;
+          const sameDesign = cart.filter((c) => c.design.id === item.design.id);
+          const copies = sameDesign.length;
+          const copyNo = sameDesign.findIndex((c) => c.cartItemId === item.cartItemId) + 1;
           return (
             <div key={item.cartItemId} className="card" style={{ padding:0, overflow:"hidden" }}>
               {/* Header */}
@@ -212,11 +215,14 @@ export default function DesignSetup() {
                       : <div style={{ width:"100%",height:"100%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:18 }}><Film size={16}/></div>}
                   </div>
                   <div>
-                    <div style={{ fontWeight:600,fontSize:14 }}>{item.design.name||item.design.category_name||"Design"}</div>
-                    <div style={{ fontSize:12,color:"var(--hint)" }}>{formatPrice(item.design.user_price)}</div>
+                    <div style={{ fontWeight:600,fontSize:14 }}>{item.design.name||item.design.category_name||"Design"}{copies > 1 && <span className="ds-copyno"> · {copyNo}/{copies}</span>}</div>
+                    <div style={{ fontSize:12,color:"var(--hint)" }}>{formatPrice(user?.role === "reseller" ? item.design.reseller_price : item.design.user_price)}</div>
                   </div>
                 </div>
                 <div className="row" style={{ gap:8 }}>
+                  <button onClick={e => { e.stopPropagation(); if (copies >= 10) { haptic("light"); return; } haptic("medium"); const nid = duplicateCartItem(item.cartItemId); setExpandedId(nid); }} title="Duplicate this design" className="ds-dup">
+                    <Copy size={14}/>
+                  </button>
                   <button onClick={e => { e.stopPropagation(); removeFromCart(item.cartItemId); }} style={{ background:"none",border:"none",cursor:"pointer",color:"var(--danger)",padding:4 }}>
                     <X size={15}/>
                   </button>

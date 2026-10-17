@@ -1273,3 +1273,8 @@ html[data-gfx="balanced"] .page-header-premium, html[data-gfx="low"] .page-heade
   0%   { transform: translateX(-130%) skewX(-18deg); }
   60%, 100% { transform: translateX(260%) skewX(-18deg); }
 }
+
+/* ===== Duplicate design ===== */
+.ds-dup { display:flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:9px; cursor:pointer; background:rgba(var(--accent-rgb),0.12); border:1px solid rgba(var(--accent-rgb),0.35); color:var(--accent); transition: transform var(--dur-fast) var(--ease-spring); -webkit-tap-highlight-color: transparent; }
+.ds-dup:active { transform: scale(0.85); }
+.ds-copyno { font-size:11px; font-weight:800; color:var(--accent); }
