@@ -7,6 +7,7 @@ import { useEmojis } from "../context/EmojiContext";
 import AnimationPreview from "../components/AnimationPreview";
 import AnimatedNumber from "../components/AnimatedNumber";
 import TierBadge from "../components/TierBadge";
+import RoleBadge from "../components/RoleBadge";
 import api from "../lib/api";
 
 const RANK_STYLES = {
@@ -150,7 +151,7 @@ export default function Leaderboard() {
                       <div className={first ? "lb-avatar-glow" : ""} style={{ "--c": st.color }}>
                         <Avatar leader={leader} size={first ? 64 : 52} color={st.color} />
                       </div>
-                      <div className="lb-name">{leader.is_me ? "You" : leader.first_name}{roleMark(leader.role)}<TierBadge spent={leader.lifetime_spent} size={14} /></div>
+                      <div className="lb-name">{leader.is_me ? "You" : leader.first_name}<RoleBadge role={leader.role} size={14} /><TierBadge spent={leader.lifetime_spent} size={14} /></div>
                       <div className="lb-amount" style={{ color: st.color }}>
                         <AnimatedNumber value={Number(leader.total_spent) || 0} format={formatPrice} duration={1100} />
                       </div>
@@ -178,7 +179,7 @@ export default function Leaderboard() {
                       <Avatar leader={leader} size={40} />
                       <div style={{ flex:1, minWidth:0 }}>
                         <div style={{ fontWeight:700, fontSize:14 }}>
-                          {leader.is_me ? "You" : `${leader.first_name} ${leader.last_name || ""}`}{roleMark(leader.role)}<TierBadge spent={leader.lifetime_spent} size={16} label />
+                          {leader.is_me ? "You" : `${leader.first_name} ${leader.last_name || ""}`}<RoleBadge role={leader.role} size={16} /><TierBadge spent={leader.lifetime_spent} size={16} label />
                         </div>
                         {leader.username && <div style={{ fontSize:12, color:"var(--hint)" }}>@{leader.username}</div>}
                       </div>

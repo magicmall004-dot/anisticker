@@ -1282,3 +1282,6 @@ html[data-gfx="balanced"] .page-header-premium, html[data-gfx="low"] .page-heade
 /* ===== Tier badge ===== */
 .tb { display: inline-flex; align-items: center; gap: 3px; margin-left: 4px; vertical-align: -3px; }
 .tb-name { font-size: 9px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--tc); }
+
+/* ===== Role badge ===== */
+.rb { display: inline-flex; align-items: center; margin-left: 4px; vertical-align: -3px; }
