@@ -1288,3 +1288,6 @@ html[data-gfx="balanced"] .page-header-premium, html[data-gfx="low"] .page-heade
 
 /* ===== Badges in front of the name ===== */
 .rb, .tb { margin-left: 0; margin-right: 4px; }
+
+/* ===== Tier badge after name ===== */
+.tb { margin-left: 4px; margin-right: 0; }
