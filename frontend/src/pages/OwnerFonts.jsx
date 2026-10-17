@@ -50,6 +50,8 @@ export default function OwnerFonts() {
       await uploadGlyph(selected.id, charInput, file);
       setCharInput("");
       await loadGlyphs(selected.id);
+    } catch (e) {
+      alert("Upload rejected: " + (e.response?.data?.detail || e.message));
     } finally {
       setUploading(false);
     }
