@@ -268,6 +268,17 @@ export default function DesignList() {
     });
   }
 
+  // Opened from a shared card: ?startapp=design_<id> shows that design right away
+  useEffect(() => {
+    if (loading || !designs.length || window.__startDesignDone) return;
+    const sp = window.Telegram?.WebApp?.initDataUnsafe?.start_param || "";
+    const m = /^design_(.+)$/.exec(sp);
+    if (!m) return;
+    window.__startDesignDone = true;
+    const d = designs.find((x) => String(x.custom_id) === m[1] || String(x.id) === m[1]);
+    if (d) { setPreviewDesign(d); recordRecentlyViewed(d.id); }
+  }, [loading, designs]);
+
   const filtered = designs.filter((d) => {
     if (activeCat && d.category_id !== activeCat) return false;
     if (activeTag && !(d.tags || []).includes(activeTag)) return false;
