@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import GifButton from "../components/GifButton";
 import { getDesigns, getDesign, getCategories, createDesign, updateDesign, deleteDesign, uploadDesignFile, syncEmojiNow, confirmManualEmoji, verifyEmojiLinks, requestFileViaBot, cleanupOrphanedEmoji } from "../lib/api";
 import LayerPicker from "../components/LayerPicker";
 import { Plus, Edit2, Trash2, Eye, EyeOff, X, Check, Film, Sparkles } from "lucide-react";
@@ -703,6 +704,7 @@ export default function OwnerDesigns() {
                 </div>
               </div>
               <div className="row" style={{ gap:4 }}>
+                <GifButton design={d} />
                 <EmojiSyncButton design={d} onSynced={() => loadAll(true)} />
                 {!d.custom_emoji_id && <ManualConfirmButton design={d} onSynced={() => loadAll(true)} />}
                 <button className="btn btn-ghost" style={{ padding:6 }}
