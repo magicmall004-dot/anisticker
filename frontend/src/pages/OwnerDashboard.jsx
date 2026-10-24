@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, Package, Layers, CreditCard, Users, Settings, Wallet, Sparkles, Gift, TrendingUp, Send, Type, Tag } from "lucide-react";
+import { ChevronLeft, Package, Layers, CreditCard, Users, Settings, Wallet, Sparkles, Gift, TrendingUp, Send, Type, Tag, Star } from "lucide-react";
 import { useApp } from "../context/AppContext";
 import OwnerOrders    from "./OwnerOrders";
 import OwnerDesigns   from "./OwnerDesigns";
@@ -17,6 +17,7 @@ import OwnerBroadcast from "./OwnerBroadcast";
 import OwnerFonts     from "./OwnerFonts";
 import OwnerCategories from "./OwnerCategories";
 import OwnerEmojiPacks from "./OwnerEmojiPacks";
+import OwnerStars from "./OwnerStars";
 
 const TABS = [
   { id:"orders",   label:"Orders",   Icon:Package    },
@@ -34,6 +35,7 @@ const TABS = [
   { id:"fonts",      label:"Fonts",     Icon:Type       },
   { id:"categories", label:"Categories", Icon:Tag        },
   { id:"emojipacks", label:"Emoji Packs", Icon:Sparkles   },
+  { id:"stars", label:"Stars & Premium", Icon:Star },
 ];
 
 export default function OwnerDashboard() {
@@ -97,6 +99,7 @@ export default function OwnerDashboard() {
         {tab === "fonts"     && <OwnerFonts />}
         {tab === "categories" && <OwnerCategories />}
         {tab === "emojipacks" && <OwnerEmojiPacks />}
+        {tab === "stars" && <OwnerStars />}
       </div>
     </div>
   );
