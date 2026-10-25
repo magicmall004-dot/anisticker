@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Star, Crown, Save } from "lucide-react";
 import api from "../lib/api";
 import { formatPrice } from "../lib/utils";
-import { hapticNotification } from "../lib/telegram";
+import { hapticNotification, showConfirm } from "../lib/telegram";
 
 const cost = (r, q) => Math.ceil(Math.round(Number(r.price_mmk || 0) * q / (r.unit_qty || 1) * 1e6) / 1e6);
 
@@ -93,7 +93,49 @@ export default function OwnerStars() {
             </button>
           </div>
         );
-      })}
+
+      <StarTest rows={rows} />
+    </div>
+  );
+}
+
+function StarTest({ rows }) {
+  const [code, setCode] = useState("stars");
+  const [qty, setQty] = useState(50);
+  const [busy, setBusy] = useState(false);
+  const [out, setOut] = useState(null);
+  async function run() {
+    if (busy) return;
+    if (!(await showConfirm("This buys for your own @username and charges your own balance. Continue?"))) return;
+    setBusy(true); setOut(null);
+    try {
+      const r = await api.post("/star-shop/buy", { code, qty: Number(qty) });
+      setOut({ ok: true, ...r.data }); hapticNotification("success");
+    } catch (e) {
+      setOut({ ok: false, message: e.response?.data?.detail || e.message }); hapticNotification("error");
+    } finally { setBusy(false); }
+  }
+  return (
+    <div className="card" style={{ border: "1px dashed rgba(255,215,0,0.4)" }}>
+      <div style={{ fontWeight: 800, marginBottom: 4 }}>Test purchase (owner only)</div>
+      <div style={{ fontSize: 12, color: "var(--hint)", marginBottom: 10, lineHeight: 1.6 }}>
+        Buys for your own @username. While the delivery service is in test mode, your balance is charged and refunded right away.
+        Works even when a product is switched off.
+      </div>
+      <select className="input" value={code} onChange={(e) => setCode(e.target.value)} style={{ color: "var(--text)", background: "rgba(255,255,255,.07)" }}>
+        {rows.map((r) => <option key={r.code} value={r.code}>{r.label}</option>)}
+      </select>
+      {code === "stars" && (
+        <input className="input" type="number" min="50" max="1000" value={qty} onChange={(e) => setQty(e.target.value)} style={{ marginTop: 8 }} />
+      )}
+      <button className="btn btn-secondary btn-full" style={{ marginTop: 10 }} disabled={busy} onClick={run}>
+        {busy ? "Working…" : "Run test purchase"}
+      </button>
+      {out && (
+        <div style={{ marginTop: 10, fontSize: 13, color: out.ok ? "var(--success)" : "var(--danger)" }}>
+          {out.message}{out.status ? ` (${out.status})` : ""}
+        </div>
+      )}
     </div>
   );
 }
