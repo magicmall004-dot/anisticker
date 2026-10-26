@@ -45,6 +45,8 @@ export default function OwnerStars() {
         </div>
       </div>
 
+      <LimitsCard onSaved={load} />
+
       {rows.map((r) => {
         const stars = r.kind === "STARS";
         const Icon = stars ? Star : Crown;
@@ -71,12 +73,12 @@ export default function OwnerStars() {
                 <div className="row" style={{ gap: 8, marginTop: 8 }}>
                   <div className="field" style={{ flex: 1 }}>
                     <div className="label">Minimum Stars</div>
-                    <input className="input" type="number" min="50" max="1000" value={r.min_qty ?? 50}
+                    <input className="input" type="number" min="50" max="50000" value={r.min_qty ?? 50}
                       onChange={(e) => edit(r.code, { min_qty: e.target.value })} />
                   </div>
                   <div className="field" style={{ flex: 1 }}>
                     <div className="label">Maximum Stars</div>
-                    <input className="input" type="number" min="50" max="1000" value={r.max_qty ?? 1000}
+                    <input className="input" type="number" min="50" max="50000" value={r.max_qty ?? 1000}
                       onChange={(e) => edit(r.code, { max_qty: e.target.value })} />
                   </div>
                 </div>
@@ -126,7 +128,7 @@ function StarTest({ rows }) {
         {rows.map((r) => <option key={r.code} value={r.code}>{r.label}</option>)}
       </select>
       {code === "stars" && (
-        <input className="input" type="number" min="50" max="1000" value={qty} onChange={(e) => setQty(e.target.value)} style={{ marginTop: 8 }} />
+        <input className="input" type="number" min="50" max="50000" value={qty} onChange={(e) => setQty(e.target.value)} style={{ marginTop: 8 }} />
       )}
       <button className="btn btn-secondary btn-full" style={{ marginTop: 10 }} disabled={busy} onClick={run}>
         {busy ? "Working…" : "Run test purchase"}
@@ -136,6 +138,57 @@ function StarTest({ rows }) {
           {out.message}{out.status ? ` (${out.status})` : ""}
         </div>
       )}
+    </div>
+  );
+}
+
+const LIMIT_FIELDS = [
+  ["max_stars", "Maximum Stars in one order", "Up to 50,000"],
+  ["min_stars", "Minimum Stars in one order", "At least 50"],
+  ["user_day_stars", "Maximum Stars per customer per day", "Must be at least the per-order maximum"],
+  ["user_day_premium", "Premium orders per customer per day", "1 to 5"],
+  ["day_cap_ton", "Daily spending cap, all customers", "In your wallet coin, as your star bot shows it"],
+  ["min_reserve_ton", "Always keep this much in the wallet", "Orders are refused below it"],
+  ["est_ton_per_star", "Estimated cost per Star (0 = off)", "Refuses orders the wallet cannot cover"],
+];
+
+function LimitsCard({ onSaved }) {
+  const [lim, setLim] = useState(null);
+  const [err, setErr] = useState("");
+  const [saving, setSaving] = useState(false);
+  useEffect(() => {
+    api.get("/star-shop/limits").then((r) => setLim(r.data))
+      .catch((e) => setErr(e.response?.data?.detail || "The delivery service is not reachable"));
+  }, []);
+  async function save() {
+    if (!(await showConfirm("Change the delivery limits? They protect your wallet."))) return;
+    setSaving(true); setErr("");
+    try {
+      const payload = Object.fromEntries(Object.entries(lim).map(([k, v]) => [k, Number(v)]));
+      const r = await api.put("/star-shop/limits", payload);
+      setLim(r.data); hapticNotification("success"); if (onSaved) onSaved();
+    } catch (e) {
+      setErr(e.response?.data?.detail || e.message); hapticNotification("error");
+    } finally { setSaving(false); }
+  }
+  if (!lim) return err ? <div className="card" style={{ color: "var(--danger)", fontSize: 13 }}>{err}</div> : null;
+  return (
+    <div className="card" style={{ border: "1px solid rgba(255,215,0,0.35)" }}>
+      <div style={{ fontWeight: 800, marginBottom: 4 }}>Delivery limits</div>
+      <div style={{ fontSize: 12, color: "var(--hint)", lineHeight: 1.6 }}>
+        These protect your Fragment wallet. An order that breaks a limit is refused before anything is bought.
+      </div>
+      {LIMIT_FIELDS.map(([k, label, hint]) => (
+        <div className="field" key={k} style={{ marginTop: 10 }}>
+          <div className="label">{label}</div>
+          <input className="input" type="number" step="any" value={lim[k] ?? ""} onChange={(e) => setLim({ ...lim, [k]: e.target.value })} />
+          <div style={{ fontSize: 11, color: "var(--hint)", marginTop: 2 }}>{hint}</div>
+        </div>
+      ))}
+      {err && <div style={{ color: "var(--danger)", fontSize: 13, marginTop: 8 }}>{err}</div>}
+      <button className="btn btn-primary btn-full" style={{ marginTop: 12 }} disabled={saving} onClick={save}>
+        {saving ? "Saving…" : "Save limits"}
+      </button>
     </div>
   );
 }
