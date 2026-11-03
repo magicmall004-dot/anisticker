@@ -23,6 +23,7 @@ import MyOrders       from "./pages/MyOrders";
 import Profile        from "./pages/Profile";
 import WalletPage     from "./pages/WalletPage";
 import Leaderboard    from "./pages/Leaderboard";
+import CardMaker       from "./pages/CardMaker";
 // Lazy-loaded: owner panel and giveaway pages are only needed by a small
 // subset of visits, so they're split into their own chunk instead of
 // bloating the initial bundle every customer has to download on open.
@@ -146,6 +147,7 @@ function AppRoutes() {
         <Route path="/leaderboard"   element={<ProtectedRoute><Leaderboard /></ProtectedRoute>} />
         <Route path="/giveaway/:id"  element={<ProtectedRoute><Suspense fallback={<LazyFallback/>}><GiveawayPage /></Suspense></ProtectedRoute>} />
         <Route path="/giveaways"     element={<ProtectedRoute><Suspense fallback={<LazyFallback/>}><GiveawayHistory /></Suspense></ProtectedRoute>} />
+        <Route path="/cardmaker"     element={<ProtectedRoute><CardMaker /></ProtectedRoute>} />
         <Route path="*"              element={<Navigate to="/" replace />} />
       </Routes>
     </>

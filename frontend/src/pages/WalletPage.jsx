@@ -70,6 +70,10 @@ export default function WalletPage() {
           <Plus size={18} /> Top Up Balance
         </button>
 
+        <button className="btn btn-secondary btn-full" style={{ padding:14 }} onClick={() => { haptic("light"); navigate("/cardmaker"); }}>
+          ✨ Create Wallet Card
+        </button>
+
         <div className="card" style={{ border:"1px dashed rgba(var(--accent-rgb),0.3)" }}>
           <div className="row" style={{ gap:8, marginBottom:10 }}>
             <Gift size={18} color="var(--accent)" />
@@ -106,6 +110,8 @@ function TxRow({ tx }) {
     manual_remove: { label:"Removed by Owner",color:"var(--danger)",  sign:"-" },
     order_payment: { label:"Order Payment",   color:"var(--danger)",  sign:"-" },
     order_refund:  { label:"Order Refund",    color:"var(--success)", sign:"+" },
+    card_payment:  { label:"Wallet Card", color:"var(--danger)",  sign:"-" },
+    card_refund:   { label:"Card Refund", color:"var(--success)", sign:"+" },
   }[tx.type] || { label:tx.type, color:"var(--hint)", sign:"" };
 
   return (

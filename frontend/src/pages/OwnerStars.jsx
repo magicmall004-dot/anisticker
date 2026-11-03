@@ -95,6 +95,7 @@ export default function OwnerStars() {
             </button>
           </div>
         );
+      })}
 
       <StarTest rows={rows} />
     </div>
