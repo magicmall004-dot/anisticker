@@ -15,7 +15,7 @@ const OPS = {
   preview: (p) => api.post("/cardmaker/preview", { config: p.config, animated: !!p.animated }),
   thumbs:  (p) => api.post("/cardmaker/thumbs", { config: p.config }),
   autofit: (p) => api.post("/cardmaker/autofit", { config: p.config }),
-  order:   (p) => api.post("/cardmaker/order", { config: p.config, idem_key: String(p.idem_key) }),
+  order:   (p) => api.post("/cardmaker/order", { config: p.config, idem_key: String(p.idem_key), kind: p.kind === "json" ? "json" : "tgs" }),
 };
 
 export default function CardMaker() {

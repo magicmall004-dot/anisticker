@@ -195,7 +195,8 @@ button{touch-action:manipulation}
   <div class="meter"><div id="bar"></div></div><div id="msz"></div>
   <label style="margin-top:10px">Detail: <b id="dv">Original</b></label><input type="range" id="simp" min="0" max="8" step="1" value="0">
   <div class="tg"><label><input type="checkbox" id="s_user">Username</label><label><input type="checkbox" id="s_usd">Dollar line</label><label><input type="checkbox" id="s_label">Bottom text</label><label><input type="checkbox" id="s_wallet">Wallet</label></div>
-  <button class="p" id="fit">Auto-fit to 64 KB</button></div>
+  <button class="p" id="fit">Auto-fit to 64 KB</button>
+  <button id="getjson" style="margin-top:8px;width:100%">⬇ Get as JSON (any size)</button><div class="sub" style="font-size:12px;margin-top:6px">Sent to your Telegram chat as a .json file, even over 64 KB. Same price as a card. It works as a sticker only if it is under 64 KB.</div></div>
 </aside></main>
 <p class="cr">Gift stickers &amp; data: thanks to <a href="https://t.me/GiftChanges" target="_blank" rel="noopener noreferrer">@GiftChanges</a> for this API (api.changes.tg).</p>
 <div id="toast"></div>
@@ -366,7 +367,7 @@ const fmt=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:0});
 function buyLabel(){const b=$('buy');if(!b)return;b.textContent=INFO.price==null?'Get my card':INFO.free?'Get my card · free':'Buy · '+fmt(INFO.price)+' MMK';b.dataset.base=b.textContent;}
 const LIM=65536;let seq=0;
 function setSize(kb){const z=kb;$('info').textContent='TGS '+(z/1024).toFixed(1)+' KB';$('bar').style.width=Math.min(100,z/LIM*100)+'%';$('bar').className=z>LIM?'over':'';
-  $('msz').textContent=(z/1024).toFixed(1)+' KB of 64 KB'+(z>LIM?' — too large for a Telegram sticker. Lower the detail, remove a sticker, or press Auto-fit.':'');}
+  $('msz').textContent=(z/1024).toFixed(1)+' KB of 64 KB'+(z>LIM?' — too large for a Telegram sticker. Lower the detail, remove a sticker, or press Auto-fit. Or use “Get as JSON” in the Size tab.':'');}
 function showImg(r){let im=$('pimg');if(!im){im=new Image();im.id='pimg';im.alt='Card preview (watermarked)';$('view').appendChild(im);}im.src='data:'+r.mime+';base64,'+r.img;}
 async function render(animated){const my=++seq;
   try{const r=await rpc('preview',{config:cfg(),animated:!!animated});if(my!==seq)return;msg('');showImg(r);setSize(r.size);CANDS=r.candidates||[];renderSw();
@@ -536,6 +537,15 @@ $('buy').onclick=async()=>{
   try{const c=cfg(),j=JSON.stringify(c);if(!KEY||KEYCFG!==j){KEY=newKey();KEYCFG=j;}
     const r=await rpc('order',{config:c,idem_key:KEY});KEY=null;toast(r.already?'Already sent to your chat ✓':'Sent to your Telegram chat ✓');}
   catch(e){msg(e.message);}finally{b.disabled=false;buyLabel();}};
+
+let JKEY=null,JKEYCFG='',jarmed=0;const JLAB='⬇ Get as JSON (any size)';
+$('getjson').onclick=async()=>{
+  const b=$('getjson');if(INFO.price==null){msg('Price not loaded yet.');return;}
+  if(!jarmed){jarmed=setTimeout(()=>{jarmed=0;b.textContent=JLAB;},4500);b.textContent=INFO.free?'Tap again to confirm':'Tap again to pay '+fmt(INFO.price)+' MMK';return;}
+  clearTimeout(jarmed);jarmed=0;b.disabled=true;b.textContent='Working…';msg('');
+  try{const c=cfg(),j=JSON.stringify(c)+'|json';if(!JKEY||JKEYCFG!==j){JKEY=newKey();JKEYCFG=j;}
+    const r=await rpc('order',{config:c,idem_key:JKEY,kind:'json'});JKEY=null;toast(r.already?'Already sent to your chat ✓':'JSON sent to your Telegram chat ✓');}
+  catch(e){msg(e.message);}finally{b.disabled=false;b.textContent=JLAB;}};
 $('theme').onclick=()=>{const r=document.documentElement,d=r.dataset.theme==='dark'||(r.dataset.theme!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('mm-theme',r.dataset.theme);}catch(e){}};
 try{const t=localStorage.getItem('mm-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}
 S.logo=defLogo();sync();markDesign();applyBg();rpc('kv_get',{key:'presets'}).then(v=>{try{PRESETS=JSON.parse(v||'[]').slice(0,8);}catch(e){}drawP();}).catch(()=>{});buyLabel();render();thumbs();loadGifts();
