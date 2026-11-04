@@ -85,27 +85,67 @@ button.p:hover::after{transform:translateX(130%);transition:transform .8s}
 .chk{display:flex;align-items:center;gap:6px;font-size:13px;margin-top:5px}.chk input{accent-color:var(--acc)}
 .cr{padding:6px 18px 26px;color:var(--mut);font-size:12px}.cr a{color:var(--acc)}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+/* ===== layout upgrade: phone + laptop ===== */
+.off{display:none!important}
+.pin{display:grid;gap:10px}
+.tbar{display:none}
+button{touch-action:manipulation}
+#msg{flex:1 0 100%;min-height:0}#msg:empty,#info:empty{display:none}
+@media(min-width:861px){
+ .wrap{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:22px}
+ .stage{max-height:calc(100dvh - 24px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding:4px 4px 12px}
+}
+@media(max-width:860px){
+ .top{padding:10px 12px 2px}.top .sub{display:none}.orb{width:30px;height:30px;border-radius:10px}h1{font-size:18px}
+ .wrap{display:flex;flex-direction:column;gap:10px;padding:6px 12px 12px}
+ .stage{display:contents}
+ .pin{order:-1;position:sticky;top:0;z-index:20;background:var(--bg);margin:0 -12px;padding:6px 12px 8px;border-bottom:1px solid var(--line)}
+ .vwrap{width:min(100%,32dvh);margin:0 auto;padding:4px}
+ .tbar{display:flex;gap:4px;background:var(--stage);border:1px solid var(--line);border-radius:14px;padding:3px}
+ .tbar button{flex:1;min-height:42px;border:0;background:transparent;border-radius:11px;padding:8px 2px;font-size:13px;font-weight:600;color:var(--mut)}
+ .tbar button:hover{transform:none}
+ .tbar button.on{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;box-shadow:0 4px 14px color-mix(in srgb,var(--acc) 40%,transparent)}
+ .bar{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0 auto;max-width:1120px;flex-wrap:wrap;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));background:var(--panel);backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);border-top:1px solid var(--line)}
+ .bar #buy{flex:1 1 52%;min-height:48px;font-size:16px}
+ .bar #anim{flex:1 1 34%;min-height:48px}
+ #info{flex:1 0 100%;font-size:12px;line-height:1.2}
+ #toast{bottom:calc(130px + env(safe-area-inset-bottom,0px))}
+ .cr{padding-bottom:130px}
+ .panel{padding:14px}
+ button{min-height:44px;padding:10px 14px}
+ .sw button{min-height:0;width:38px;height:38px;padding:0}
+ #vbs button{width:32px!important;height:32px!important;min-height:0}
+ .pre button{min-height:40px}.tabs button{min-height:40px}.ghost{width:44px;height:44px}
+ input[type=text]{padding:12px;font-size:16px}
+ input[type=color]{height:46px}
+ input[type=range]{height:34px;margin:4px 0}
+ .chk input,.sw2 input,.tg input{width:20px;height:20px}
+ .tg label{min-height:36px}
+ .cols{grid-template-columns:repeat(2,1fr)}
+ .grid{max-height:none;grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}
+}
 </style></head><body>
 <div class="bg"><i></i><i></i><i></i></div>
 <header class="top rise"><div class="brand"><div class="orb"></div><div><h1>MagicMall <em>Card Maker</em></h1><p class="sub">Design, preview and export animated Telegram cards</p></div></div><button class="ghost" id="theme" aria-label="Toggle light / dark">◐</button></header>
 <main class="wrap">
 <section class="col">
- <div class="panel rise" style="--i:0"><h2><b>✦</b>Card design</h2><div class="dgrid" id="dgrid"></div></div>
- <div class="panel rise" style="--i:1"><h2><b>★</b>Presets &amp; share</h2>
+ <div class="panel rise" data-tab="design" style="--i:0"><h2><b>✦</b>Card design</h2><div class="dgrid" id="dgrid"></div></div>
+ <div class="panel rise" data-tab="design" style="--i:1"><h2><b>★</b>Presets &amp; share</h2>
   <div class="bar" style="margin-bottom:10px"><button id="rand" class="p">🎲 Surprise me</button><button id="rst">Reset</button></div>
   <div class="pkbar"><input type="text" id="pname" placeholder="Name this design…" maxlength="24" autocomplete="off"><button id="psave">Save preset</button></div>
   <div class="pre" id="plist" style="margin:10px 0 0"></div><div class="sub" style="font-size:12px;margin-top:6px">Presets are saved on this device.</div></div>
- <div class="panel rise" style="--i:1"><h2><b>1</b>Balance</h2>
+ <div class="panel rise" data-tab="text" style="--i:1"><h2><b>1</b>Balance</h2>
   <div class="row"><div><label>Amount (before unit)</label><input type="text" id="amount"></div><div><label>Unit</label><input type="text" id="unit"></div></div>
   <div class="row"><div><label>Currency sign</label><input type="text" id="sign" maxlength="3"></div><div><label>Amount under it</label><input type="text" id="usd"></div></div></div>
- <div class="panel rise" style="--i:2"><h2><b>2</b>Logo &amp; name</h2>
+ <div class="panel rise" data-tab="text" style="--i:2"><h2><b>2</b>Logo &amp; name</h2>
   <div class="row"><div><label>Logo (SVG, Lottie JSON or TGS)</label><input type="file" id="logo" accept=".svg,.json,.tgs,image/svg+xml,application/json"></div><div style="align-self:end"><button id="rlogo">My default logo</button></div></div>
   <div class="row one"><div><label>Logo size: <b id="lsv">100%</b></label><input type="range" id="lsz" min="40" max="250" step="5" value="100"></div></div>
   <div class="row one"><div><label>Text beside logo</label><input type="text" id="label"></div></div></div>
- <div class="panel rise" style="--i:3"><h2><b>3</b>Wallet &amp; username</h2>
+ <div class="panel rise" data-tab="text" style="--i:3"><h2><b>3</b>Wallet &amp; username</h2>
   <div class="row one"><div><label>Wallet address — 48 chars → 6 right + 6 left, 4 each</label><input type="text" id="wallet" spellcheck="false"><div class="chk"><input type="checkbox" id="upper"><span id="cnt"></span>&nbsp;·&nbsp;uppercase</div></div></div>
   <div class="row one"><div><label>Username chip (empty = hidden)</label><input type="text" id="user"></div></div></div>
- <div class="panel rise" style="--i:4"><h2><b>4</b>NFT stickers</h2>
+ <div class="panel rise" data-tab="stickers" style="--i:4"><h2><b>4</b>NFT stickers</h2>
   <label>Gift Changes — pick an original or a model (static previews, frozen on frame 0)</label>
   <div class="pkbar"><input type="text" id="gq" placeholder="Search…" maxlength="40" autocomplete="off"><button id="gload" class="p">Load gifts</button></div>
   <div class="crumb" id="crumb" hidden><button id="gback">← All gifts</button><b id="gname"></b></div>
@@ -113,22 +153,22 @@ button.p:hover::after{transform:translateX(130%);transition:transform .8s}
   <div class="grid" id="grid" hidden></div><div id="pkmsg"></div>
   <label style="margin-top:12px">…or upload your own .tgs</label><input type="file" id="nft" accept=".tgs" multiple>
   <div id="items"></div></div>
- <div class="panel rise" style="--i:5"><h2><b>5</b>Colours</h2>
+ <div class="panel rise" data-tab="colours" style="--i:5"><h2><b>5</b>Colours</h2>
   <div class="sw2"><input type="checkbox" id="autoc"><label for="autoc" style="margin:0;color:var(--ink)">Adapt card colours to my NFT automatically</label></div>
   <div class="sw" id="nsw" hidden></div>
   <div class="pre" id="pre"></div>
   <div class="cols"><label>Card<input type="color" id="c_card"></label><label>Glow<input type="color" id="c_glow"></label><label>Edge<input type="color" id="c_edge"></label>
   <label>Accent text<input type="color" id="c_accent"></label><label>Address text<input type="color" id="c_addr"></label><label>Main text<input type="color" id="c_text"></label></div>
   <div style="margin-top:12px"><button id="auto">✨ Auto palette from card colour</button></div></div>
-<div class="panel rise" style="--i:6"><h2><b>6</b>Extra effects (optional)</h2>
+<div class="panel rise" data-tab="colours" style="--i:6"><h2><b>6</b>Extra effects (optional)</h2>
   <div class="pre" id="fxpre"></div>
   <div class="tg"><label><input type="checkbox" id="f_sweep">Light sweep</label><label><input type="checkbox" id="f_aurora">Aurora flow</label><label><input type="checkbox" id="f_shift">Colour shift</label><label><input type="checkbox" id="f_holo">Holographic</label><label><input type="checkbox" id="f_pop">3D pop for NFT</label></div>
   <div class="sub" style="font-size:12px">Effects add a few KB each. Sweep, aurora and holographic are clipped to the card shape.</div></div>
 </section>
-<aside class="stage">
- <div class="vwrap rise" style="--i:2"><div class="aura"></div><div id="view"></div></div>
- <div class="bar rise" style="--i:3"><button class="p" id="buy">Get my card</button><button id="anim">▶ Preview animation</button><span id="info"></span></div><div class="sw" id="vbs" style="margin:0"><span>Preview background</span></div><div id="msg"></div>
- <div class="panel rise" style="--i:4"><h2><b>⚖</b>Size budget · 64 KB</h2>
+<aside class="stage"><div class="pin">
+ <div class="vwrap rise" style="--i:2"><div class="aura"></div><div id="view"></div></div><nav class="tbar" id="tbar" aria-label="Editor sections"></nav></div>
+ <div class="bar rise" style="--i:3"><button class="p" id="buy">Get my card</button><button id="anim">▶ Preview animation</button><span id="info"></span><div id="msg"></div></div><div class="sw" id="vbs" data-tab="colours" style="margin:0"><span>Preview background</span></div>
+ <div class="panel rise" data-tab="size" style="--i:4"><h2><b>⚖</b>Size budget · 64 KB</h2>
   <div class="meter"><div id="bar"></div></div><div id="msz"></div>
   <label style="margin-top:10px">Detail: <b id="dv">Original</b></label><input type="range" id="simp" min="0" max="8" step="1" value="0">
   <div class="tg"><label><input type="checkbox" id="s_user">Username</label><label><input type="checkbox" id="s_usd">Dollar line</label><label><input type="checkbox" id="s_label">Bottom text</label><label><input type="checkbox" id="s_wallet">Wallet</label></div>
@@ -459,4 +499,15 @@ $('buy').onclick=async()=>{
 $('theme').onclick=()=>{const r=document.documentElement,d=r.dataset.theme==='dark'||(r.dataset.theme!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('mm-theme',r.dataset.theme);}catch(e){}};
 try{const t=localStorage.getItem('mm-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}
 S.logo=defLogo();sync();markDesign();applyBg();rpc('kv_get',{key:'presets'}).then(v=>{try{PRESETS=JSON.parse(v||'[]').slice(0,8);}catch(e){}drawP();}).catch(()=>{});buyLabel();render();thumbs();loadGifts();
+
+(function(){
+ const T=[['design','Design'],['text','Text'],['stickers','Stickers'],['colours','Colours'],['size','Size']],mq=matchMedia('(max-width:860px)'),nav=$('tbar');let cur='design';
+ T.forEach(([k,l])=>{const b=document.createElement('button');b.type='button';b.textContent=l;b.dataset.t=k;b.onclick=()=>{cur=k;apply(true);};nav.appendChild(b);});
+ function apply(scroll){const m=mq.matches;
+  document.querySelectorAll('[data-tab]').forEach(p=>p.classList.toggle('off',m&&p.dataset.tab!==cur));
+  nav.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.t===cur));
+  if(scroll&&m){const first=document.querySelector('[data-tab]:not(.off)'),pin=document.querySelector('.pin');
+   if(first){const t=first.getBoundingClientRect().top+scrollY-pin.offsetHeight-8;if(scrollY>t)scrollTo({top:Math.max(0,t)});}}}
+ mq.addEventListener('change',()=>apply(false));apply(false);
+})();
 </script></body></html>

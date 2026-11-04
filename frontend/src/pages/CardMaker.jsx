@@ -25,6 +25,7 @@ export default function CardMaker() {
   const [info, setInfo] = useState(null);
   const [prices, setPrices] = useState(null);   // owner only
   const [saving, setSaving] = useState(false);
+  const [showPrices, setShowPrices] = useState(false);
   const kvKey = (k) => `mm_cm_${user?.id}_${k}`;
 
   const pushInfo = useCallback((i) => {
@@ -88,16 +89,19 @@ export default function CardMaker() {
         <button className="btn btn-ghost" style={{ padding: 6 }} onClick={() => navigate(-1)}><ChevronLeft size={22} /></button>
         <div className="page-title">Wallet Card Maker</div>
       </div>
-      <div className="page-body" style={{ paddingBottom: 90 }}>
+      <div className="page-body" style={{ paddingBottom: 70, paddingTop: 8 }}>
         {info && (
-          <div className="card" style={{ padding: "10px 14px", fontSize: 13 }}>
-            <div className="row-between">
+          <div className="card" style={{ padding: "8px 12px", fontSize: 13 }}>
+            <div className="row-between" style={{ gap: 8 }}>
               <span>{info.free ? "Free for you ✨" : `Price: ${formatPrice(info.price)}`}</span>
               <span style={{ color: "var(--hint)" }}>Balance: {formatPrice(info.balance)}</span>
+              {prices && (
+                <button className="btn btn-ghost" style={{ padding: "4px 8px", fontSize: 12 }} onClick={() => setShowPrices((v) => !v)}>⚙ Prices</button>
+              )}
             </div>
           </div>
         )}
-        {prices && (
+        {prices && showPrices && (
           <div className="card" style={{ padding: "10px 14px" }}>
             <div style={{ fontSize: 12, color: "var(--hint)", marginBottom: 6 }}>Owner: card prices (MMK)</div>
             <div className="row" style={{ gap: 8 }}>
@@ -114,11 +118,8 @@ export default function CardMaker() {
           sandbox="allow-scripts"
           referrerPolicy="no-referrer"
           onLoad={() => info && pushInfo(info)}
-          style={{ width: "100%", height: "calc(100dvh - 170px)", minHeight: 520, border: 0, borderRadius: 14, background: "transparent" }}
+          style={{ width: "100%", height: "calc(100dvh - 185px)", minHeight: 480, border: 0, borderRadius: 14, background: "transparent" }}
         />
-        <div style={{ fontSize: 11, color: "var(--hint)", textAlign: "center", marginTop: 8 }}>
-          Gift stickers &amp; data: thanks to @GiftChanges for this API (api.changes.tg)
-        </div>
       </div>
     </div>
   );
