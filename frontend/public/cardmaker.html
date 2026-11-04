@@ -136,6 +136,15 @@ button{touch-action:manipulation}
 .bt span{position:relative;text-shadow:0 1px 3px rgba(0,0,0,.45)}.bt.on{border-color:var(--ink)}.bt.none{background:var(--stage)!important;color:var(--ink)}.bt.none::before{display:none}.bt.none span{text-shadow:none}
 @media(max-width:860px){.bt{height:68px}.bdg{max-height:52dvh}}
 .more{grid-column:1/-1;min-height:48px;font-weight:600}
+
+/* ===== touch scroll fix ===== */
+@media(max-width:860px){
+ .grid,.bdg{overflow:visible;overscroll-behavior:auto;max-height:none}
+ .bdg{overflow-y:auto;max-height:50dvh}
+ .vwrap{width:min(100%,24dvh)}
+ .bar #buy{flex:1 1 50%}
+ .bar #anim{flex:1 1 40%;white-space:nowrap;font-size:14px;padding:10px 8px}
+}
 </style></head><body>
 <div class="bg"><i></i><i></i><i></i></div>
 <header class="top rise"><div class="brand"><div class="orb"></div><div><h1>MagicMall <em>Card Maker</em></h1><p class="sub">Design, preview and export animated Telegram cards</p></div></div><button class="ghost" id="theme" aria-label="Toggle light / dark">◐</button></header>
