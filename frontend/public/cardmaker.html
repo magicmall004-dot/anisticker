@@ -125,6 +125,16 @@ button{touch-action:manipulation}
  .cols{grid-template-columns:repeat(2,1fr)}
  .grid{max-height:none;grid-template-columns:repeat(auto-fill,minmax(84px,1fr))}
 }
+
+/* ===== NFT backdrop picker ===== */
+.bdw{position:relative;margin-bottom:12px}.bdb{display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 12px}.bdb span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.bdb b{color:var(--mut)}
+#bdp{width:30px;height:30px;border-radius:50%;flex:none;border:1px solid var(--line);background:var(--stage)}
+.bdl{margin-top:8px;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--panel);box-shadow:var(--shadow)}.bdl[hidden]{display:none}
+.bdg{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px;margin-top:8px;max-height:340px;overflow:auto;padding:2px;overscroll-behavior:contain}
+.bt{position:relative;height:62px;padding:6px;border-radius:12px;border:2px solid transparent;display:flex;align-items:flex-end;justify-content:flex-start;text-align:left;font-size:12px;font-weight:600;line-height:1.15;overflow:hidden}
+.bt::before{content:'';position:absolute;inset:0;background:repeating-radial-gradient(circle at 20% 25%,transparent 0 9px,var(--pt) 9px 10px);opacity:.28}
+.bt span{position:relative;text-shadow:0 1px 3px rgba(0,0,0,.45)}.bt.on{border-color:var(--ink)}.bt.none{background:var(--stage)!important;color:var(--ink)}.bt.none::before{display:none}.bt.none span{text-shadow:none}
+@media(max-width:860px){.bt{height:68px}.bdg{max-height:52dvh}}
 </style></head><body>
 <div class="bg"><i></i><i></i><i></i></div>
 <header class="top rise"><div class="brand"><div class="orb"></div><div><h1>MagicMall <em>Card Maker</em></h1><p class="sub">Design, preview and export animated Telegram cards</p></div></div><button class="ghost" id="theme" aria-label="Toggle light / dark">◐</button></header>
@@ -154,6 +164,9 @@ button{touch-action:manipulation}
   <label style="margin-top:12px">…or upload your own .tgs</label><input type="file" id="nft" accept=".tgs" multiple>
   <div id="items"></div></div>
  <div class="panel rise" data-tab="colours" style="--i:5"><h2><b>5</b>Colours</h2>
+  <label>NFT Backdrop (Telegram gift colours)</label>
+  <div class="bdw"><button type="button" class="bdb" id="bdb"><i id="bdp"></i><span id="bdn">Custom / none</span><b>▾</b></button><input type="hidden" id="bd" value="">
+  <div class="bdl" id="bdl" hidden><input type="text" id="bdq" placeholder="Search 80 backdrops…" maxlength="30" autocomplete="off"><div class="bdg" id="bdg"></div></div></div>
   <div class="sw2"><input type="checkbox" id="autoc"><label for="autoc" style="margin:0;color:var(--ink)">Adapt card colours to my NFT automatically</label></div>
   <div class="sw" id="nsw" hidden></div>
   <div class="pre" id="pre"></div>
@@ -358,11 +371,26 @@ for(const k of['user','usd','label','wallet'])$('s_'+k).onchange=e=>{S.show[k]=e
 $('upper').onchange=e=>{S.upper=e.target.checked;later();};
 $('lsz').oninput=e=>{S.logoSize=+e.target.value;$('lsv').textContent=S.logoSize+'%';later();};
 // colours
-const manual=()=>{S.autoColor=false;$('autoc').checked=false;};
+const manual=()=>{S.autoColor=false;$('autoc').checked=false;resetBd();};
 function setColors(c,keepAuto){S.colors={...c};if(!keepAuto)manual();sync();render();thumbs();}
 for(const k in S.colors)$('c_'+k).addEventListener('input',e=>{S.colors[k]=e.target.value;manual();theme();later();});
 for(const n in PRE){const b=document.createElement('button'),i=document.createElement('i');i.style.background='linear-gradient(135deg,'+PRE[n].card+','+PRE[n].glow+')';b.append(i,n);b.onclick=()=>setColors(PRE[n]);$('pre').appendChild(b);}
 $('auto').onclick=()=>setColors(palFrom(S.colors.card));
+const BD=[["Amber","dab345","b1802a","7a3100","ffedc7"],["Aquamarine","60b195","46abb4","035f67","c7fdfe"],["Azure Blue","5db1cb","448bab","025074","b5ecff"],["Battleship Grey","8c8c85","6c6c66","2b2a20","cfcec4"],["Black","363738","0e0f0f","6c6868","8c8f91"],["Burgundy","a35e66","6d414a","340307","e7bcc0"],["Burnt Sienna","d66f3c","b54b2d","6b0902","ffccb0"],["Camo Green","75944d","547341","163701","cfe8b9"],["Cappuccino","b1907e","7c6356","4a3226","ebd4c8"],["Caramel","d09932","b77431","7d3600","ffd9b3"],["Carmine","e0574a","a8383b","4f0100","ffb7ad"],["Carrot Juice","db9867","c76f4f","8e2100","ffd7ca"],["Celtic Blue","45b8ed","3886d9","003e85","c2e7ff"],["Chestnut","be6f54","994838","601508","fec6b9"],["Chocolate","a46e58","74443b","3e0a02","e4b6ac"],["Cobalt Blue","6088cf","5162b8","13247c","c2d3f5"],["Copper","d08656","9d6531","602901","f4d8be"],["Coral Red","da896b","c4654f","891200","ffd9d2"],["Cyberpunk","858ff3","865fd3","4318a6","e0d9ff"],["Dark Green","516341","2b452f","000501","bfd1a9"],["Dark Lilac","b17da5","8c577a","652852","f0c4e2"],["Deep Cyan","31b5aa","189599","004f4f","d1fffd"],["Desert Sand","b39f82","7e735b","504429","f2e5cd"],["Electric Indigo","a980f3","5b62d8","3722ab","d8d8ff"],["Electric Purple","ca70c6","9662d4","620fb4","ebceff"],["Emerald","78c585","42a171","006532","b9f9d9"],["English Violet","b186bb","875a91","54225f","e6c7ed"],["Fandango","e28ab6","a4588b","8e054e","ffc7eb"],["Feldgrau","899288","5e6b63","1c261f","dee9e1"],["Fire Engine","f05f4f","c43949","690009","ffb7a6"],["French Blue","5c9bc4","37739a","073b5c","c1e3f9"],["French Violet","c260e6","914ed9","4a018a","ebc7ff"],["Grape","9d74c1","794da0","3e0a6b","e0bdfe"],["Gunmetal","4c5d63","2f3b42","04080a","b6c5cc"],["Gunship Green","558a65","3d6657","07261d","b5e0d4"],["Hunter Green","8fae78","4b825b","1c491f","d8f5de"],["Indigo Dye","537991","416479","031b29","c2dcee"],["Ivory White","bab6b1","a19d97","665f52","f5f4f2"],["Jade Green","55c49c","3b9977","044931","befee7"],["Khaki Green","adb070","6b7d54","39501b","d3e6bb"],["Lavender","b789e4","8a5abc","5b10ab","e8d1ff"],["Lemongrass","aeb85a","559345","466a07","d8f2c2"],["Light Olive","c2af64","887e45","594c04","f5ebbc"],["Malachite","95b457","3d9755","046b06","c2efbe"],["Marine Blue","4e689c","3b4b7a","010821","bbcbf2"],["Mexican Pink","e36692","c9497c","750230","ffd6e6"],["Midnight Blue","5c6985","354057","030a18","bfcce0"],["Mint Green","7ecb82","459e5a","026b22","bdffcc"],["Moonstone","7eb1b4","588390","164552","daf5fd"],["Mustard","d4980d","c47712","7a2500","ffde9c"],["Mystic Pearl","d08b6d","b05770","9b0526","fedde0"],["Navy Blue","6c9edd","5c6ec9","1239a2","d3e1ff"],["Neon Blue","7596f9","6862e4","2828bc","cfddff"],["Old Gold","b58d38","946925","4f3302","ffdd8c"],["Onyx Black","4d5254","313638","000000","a9abad"],["Orange","d19a3a","c06f47","9d3907","ffe1c3"],["Pacific Cyan","5abea6","3d95ba","02648d","b6efff"],["Pacific Green","6fc793","3b9c84","006149","c6fff0"],["Persimmon","e7a75a","c5675f","ad0e00","ffe4d7"],["Pine Green","6ba97c","3e7970","0b4833","d8f5e5"],["Pistachio","97b07c","5c814c","28471b","d9f2c9"],["Platinum","b2aea7","88847e","3d382d","e9e7e2"],["Pure Gold","ccab41","987b32","703c00","ffe5ab"],["Purple","ae6cae","844784","470c47","f3cbf3"],["Ranger Green","5f7849","3c4f3b","102209","b7c4b5"],["Raspberry","e07b85","b65980","890638","ffd6e6"],["Rifle Green","64695c","4b5241","0f120b","c3c7bd"],["Roman Silver","a3a8b5","7c808a","3f4550","dadfe2"],["Rosewood","b77a77","814c52","551c22","edcacd"],["Sapphire","58a3c8","5379c2","0d45b6","c1deff"],["Satin Gold","bf9b47","8d7739","5d3b00","fee4a9"],["Seal Brown","664d45","47362e","0a0605","d4bcb5"],["Shamrock Green","8ab163","559345","126b00","d5fbc8"],["Silver Blue","80a4b8","607c91","15374b","c9e4f4"],["Sky Blue","58b4c8","538bc2","07609b","cde8fd"],["Steel Grey","97a2ac","63727c","334552","dfe4e8"],["Strawberry","dd8e6f","b75a60","a90c0c","ffd3d3"],["Tactical Pine","44826b","2f6369","002624","b7e6d3"],["Tomato","e6793e","d44e3f","800b00","ffccbd"],["Turquoise","5ec0b8","3d928e","11534c","bdf8f2"]];
+function bdPal(b){const[c,e,pt,tx]=b.slice(1).map(x=>'#'+x),[h,sa,l]=hexHsl(c),lum=(parseInt(c.slice(1,3),16)*.299+parseInt(c.slice(3,5),16)*.587+parseInt(c.slice(5,7),16)*.114)/255;
+  return{card:c,glow:hslHex(h,Math.min(100,sa+6),Math.min(80,l+16)),edge:e,accent:lum>.72?'#10131c':tx,addr:pt,text:lum>.72?'#10131c':'#ffffff'};}
+function resetBd(){$('bd').value='';$('bdp').style.background='';$('bdn').textContent='Custom / none';document.querySelectorAll('#bdg .bt').forEach(t=>t.classList.remove('on'));}
+function bdBg(b){return'radial-gradient(circle at 50% 38%,#'+b[1]+',#'+b[2]+')';}
+function bdTiles(){const q=$('bdq').value.trim().toLowerCase(),g=$('bdg');g.textContent='';
+  const mk=(label,i,b)=>{const t=document.createElement('button');t.type='button';t.className='bt'+(b?'':' none')+($('bd').value===String(i)&&b?' on':'');
+    if(b){t.style.background=bdBg(b);t.style.color='#'+b[4];t.style.setProperty('--pt','#'+b[3]);t.title=label+' · #'+b[1]+' → #'+b[2];}
+    const sp=document.createElement('span');sp.textContent=label;t.appendChild(sp);
+    t.onclick=()=>{if(!b){resetBd();}else{try{setColors(bdPal(b));}finally{$('bd').value=String(i);$('bdp').style.background=bdBg(b);$('bdn').textContent=b[0];}}$('bdl').hidden=true;};return t;};
+  if(!q)g.appendChild(mk('Custom / none',-1,null));
+  BD.forEach((b,i)=>{if(!q||b[0].toLowerCase().includes(q))g.appendChild(mk(b[0],i,b));});}
+$('bdb').onclick=()=>{const hd=$('bdl').hidden;$('bdl').hidden=!hd;if(hd){$('bdq').value='';bdTiles();}};
+$('bdq').addEventListener('input',bdTiles);
+
 $('autoc').onchange=e=>{S.autoColor=e.target.checked;if(S.autoColor)refreshAuto(true);};
 function renderSw(){const b=$('nsw');b.textContent='';b.hidden=!CANDS.length;if(!CANDS.length)return;const s=document.createElement('span');s.textContent='From your NFT';b.appendChild(s);
   CANDS.forEach((c,i)=>{const p=palFrom(c),k=document.createElement('button');k.style.cssText='--n:'+i+';background:linear-gradient(135deg,'+p.card+','+p.glow+')';k.title=p.card;k.setAttribute('aria-label','Use colour '+p.card);k.onclick=()=>setColors(p,true);b.appendChild(k);});}
