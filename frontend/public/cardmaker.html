@@ -172,6 +172,7 @@ button{touch-action:manipulation}
   <div class="tabs" id="tabs" hidden><button type="button" data-m="o" class="on">Original</button><button type="button" data-m="m">Models <span id="mcnt"></span></button></div>
   <div class="grid" id="grid" hidden></div><div id="pkmsg"></div>
   <label style="margin-top:12px">…or upload your own .tgs</label><input type="file" id="nft" accept=".tgs" multiple>
+  <div class="sw2" style="margin-top:12px"><input type="checkbox" id="nplay"><label for="nplay" style="margin:0;color:var(--ink)">Play NFT animations <span style="color:var(--mut)">(off = still image). Tap “Preview animation” to see it.</span></label></div>
   <div id="items"></div></div>
  <div class="panel rise" data-tab="colours" style="--i:5"><h2><b>5</b>Colours</h2>
   <label>NFT Backdrop (Telegram gift colours)</label>
@@ -439,6 +440,7 @@ function drawItems(){const box=$('items');box.textContent='';
     if(it.thumb){const im=new Image();im.className='thumb';im.referrerPolicy='no-referrer';im.alt='';im.onerror=()=>im.remove();im.src=it.thumb;t.appendChild(im);}
     const nm=document.createElement('span');nm.textContent=(i+1)+'. '+it.name;nm.style.cssText='flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap';
     const rm=document.createElement('button');rm.textContent='Remove';rm.onclick=()=>{S.items.splice(i,1);drawItems();view();refreshAuto(true);};t.append(nm,rm);d.appendChild(t);
+    {const pr=document.createElement('div');pr.className='sw2';const pc=document.createElement('input');pc.type='checkbox';pc.checked=!!it.play;const pl=document.createElement('label');pl.style.cssText='margin:0;color:var(--ink)';pl.textContent='Play animation';pc.onchange=()=>{it.play=pc.checked;$('nplay').checked=S.items.length>0&&S.items.every(q=>q.play);later();};pr.append(pc,pl);d.appendChild(pr);}
     [['x','X',0,776],['y','Y',0,461],['size','Size',20,500],['rot','Rotate',-180,180]].forEach(([k,l,mn,mx])=>{const lab=document.createElement('label'),v=document.createElement('b'),r=document.createElement('input');
       v.textContent=it[k];r.type='range';r.min=mn;r.max=mx;r.value=it[k];r.oninput=()=>{it[k]=+r.value;v.textContent=r.value;later();};lab.append(l+': ',v,r);d.appendChild(lab);});
     box.appendChild(d);});}
@@ -448,7 +450,7 @@ $('nft').onchange=async e=>{
     if(S.items.filter(i=>i.tgs).length>=2){msg('Up to 2 uploaded stickers.');break;}
     try{if(!f.name.toLowerCase().endsWith('.tgs'))throw new Error('use a .tgs file');if(f.size>300000)throw new Error('file is over 300 KB');
       const u=new Uint8Array(await f.arrayBuffer());let s='';for(let i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));
-      const n=S.items.length;S.items.push({name:f.name.slice(0,40),tgs:btoa(s),x:n%2?430:560,y:n<2?340:200,size:170,rot:0});msg('');toast('Added ✓');}
+      const n=S.items.length;S.items.push({name:f.name.slice(0,40),tgs:btoa(s),x:n%2?430:560,y:n<2?340:200,size:170,rot:0,play:!!S.play});msg('');toast('Added ✓');}
     catch(err){msg(f.name.slice(0,40)+': '+err.message);}}
   e.target.value='';drawItems();refreshAuto(true);};
 // Gift Changes picker (static PNG previews)
@@ -488,10 +490,10 @@ $('gload').onclick=loadGifts;
 async function addNft(g,m,ov){
   if(S.items.length>=4){pk('Up to 4 items — remove one first.');return;}
   if(isAdded(g,m)){pk('Already on the card.');return;}
-  const n=S.items.length;S.items.push({name:(g+' · '+(m||'Original')).slice(0,60),key:g+'|'+m,thumb:m?pModel(g,m):pOrig(g),x:ov?ov.x:(n%2?430:560),y:ov?ov.y:(n<2?340:200),size:ov?ov.size:170,rot:ov?ov.rot:0});
+  const n=S.items.length;S.items.push({name:(g+' · '+(m||'Original')).slice(0,60),key:g+'|'+m,thumb:m?pModel(g,m):pOrig(g),x:ov?ov.x:(n%2?430:560),y:ov?ov.y:(n<2?340:200),size:ov?ov.size:170,rot:ov?ov.rot:0,play:!!S.play});
   pk('');toast('Added to card ✓');drawItems();view();refreshAuto(true);}
 // presets, import/export, surprise
-const cfg=()=>{const ups=[],items=S.items.map(i=>{const r={x:i.x,y:i.y,size:i.size,rot:i.rot};if(i.key)r.key=i.key;else if(i.tgs){ups.push(i.tgs);r.up=ups.length-1;}return r;}).filter(r=>r.key||r.up!==undefined);
+const cfg=()=>{const ups=[],items=S.items.map(i=>{const r={x:i.x,y:i.y,size:i.size,rot:i.rot,play:!!i.play};if(i.key)r.key=i.key;else if(i.tgs){ups.push(i.tgs);r.up=ups.length-1;}return r;}).filter(r=>r.key||r.up!==undefined);
   return{v:1,design:S.design,amount:S.amount,unit:S.unit,sign:S.sign,usd:S.usd,label:S.label,wallet:S.wallet,upper:S.upper,user:S.user,logoSize:S.logoSize,colors:S.colors,autoColor:S.autoColor,show:S.show,fx:S.fx,simp:S.simp,step:S.step,items,uploads:ups,logo:S.logo?{kind:'group',group:S.logo}:'default'};};
 const HEX=/^#[0-9a-f]{6}$/i;
 function norm(c){const o={};for(const k in RULE)o[k]=String(c[k]==null?DEF[k]:c[k]).replace(RULE[k][1],'').slice(0,RULE[k][0]);
@@ -505,7 +507,7 @@ async function applyCfg(c){
   S.items=[];S.logo=null;
   if(c.logo&&typeof c.logo==='object'&&c.logo.group)try{S.logo=cleanShapes([c.logo.group],{n:0})[0]||null;}catch(e){}
   for(const it of(Array.isArray(c.items)?c.items:[]).slice(0,4)){if(typeof it.key!=='string')continue;const[g,m]=it.key.split('|');if(!g||g.length>80||(m||'').length>80)continue;
-    S.items.push({name:(g+' · '+(m||'Original')).slice(0,60),key:g+'|'+m,thumb:m?pModel(g,m):pOrig(g),x:+it.x||0,y:+it.y||0,size:+it.size||170,rot:+it.rot||0});}
+    S.items.push({name:(g+' · '+(m||'Original')).slice(0,60),key:g+'|'+m,thumb:m?pModel(g,m):pOrig(g),x:+it.x||0,y:+it.y||0,size:+it.size||170,rot:+it.rot||0,play:!!it.play});}
   sync();markDesign();applyBg();drawItems();view();render();thumbs();
 }
 let PRESETS=[];
@@ -524,7 +526,7 @@ const pick=a=>a[Math.floor(Math.random()*a.length)];
 $('rand').onclick=()=>{S.design=pick(DESIGN_KEYS);S.colors=palFrom(hslHex(Math.random()*360,68+Math.random()*24,42+Math.random()*12));manual();sync();markDesign();applyBg();render();thumbs();};
 drawP();
 $('fit').onclick=async()=>{$('fit').disabled=true;msg('Optimising…');
-  try{const r=await rpc('autofit',{config:cfg()});Object.assign(S,{simp:r.patch.simp,step:r.patch.step,fx:r.patch.fx,show:r.patch.show});sync();msg('');
+  try{const r=await rpc('autofit',{config:cfg()});Object.assign(S,{simp:r.patch.simp,step:r.patch.step,fx:r.patch.fx,show:r.patch.show});if(r.patch.anim===false){S.items.forEach(q=>q.play=false);S.play=false;$('nplay').checked=false;drawItems();}sync();msg('');
     toast(r.size<=LIM?'Fitted'+(r.notes.length?' · removed '+r.notes.join(', '):' ✓'):'Still over the limit — remove a sticker');render();}
   catch(e){msg(e.message);}finally{$('fit').disabled=false;}};
 let KEY=null,KEYCFG='',armed=0;
@@ -546,6 +548,7 @@ $('getjson').onclick=async()=>{
   try{const c=cfg(),j=JSON.stringify(c)+'|json';if(!JKEY||JKEYCFG!==j){JKEY=newKey();JKEYCFG=j;}
     const r=await rpc('order',{config:c,idem_key:JKEY,kind:'json'});JKEY=null;toast(r.already?'Already sent to your chat ✓':'JSON sent to your Telegram chat ✓');}
   catch(e){msg(e.message);}finally{b.disabled=false;b.textContent=JLAB;}};
+$('nplay').onchange=e=>{S.play=e.target.checked;S.items.forEach(q=>q.play=S.play);drawItems();later();};
 $('theme').onclick=()=>{const r=document.documentElement,d=r.dataset.theme==='dark'||(r.dataset.theme!=='light'&&matchMedia('(prefers-color-scheme:dark)').matches);r.dataset.theme=d?'light':'dark';try{localStorage.setItem('mm-theme',r.dataset.theme);}catch(e){}};
 try{const t=localStorage.getItem('mm-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t;}catch(e){}
 S.logo=defLogo();sync();markDesign();applyBg();rpc('kv_get',{key:'presets'}).then(v=>{try{PRESETS=JSON.parse(v||'[]').slice(0,8);}catch(e){}drawP();}).catch(()=>{});buyLabel();render();thumbs();loadGifts();
