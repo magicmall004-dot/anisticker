@@ -161,6 +161,14 @@ button{touch-action:manipulation}
  .cr{padding-bottom:96px}
  #toast{bottom:calc(96px + env(safe-area-inset-bottom,0px))}
 }
+
+/* ===== card crop v3: full card, no background ===== */
+[hidden]{display:none!important}
+.aura{display:none!important}
+.vwrap{padding:0!important;border-radius:0!important}
+#view{display:block!important;position:relative;overflow:hidden;aspect-ratio:var(--ar,1.6)!important;background:none!important;border:0!important;border-radius:0!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.dbtn .dth{aspect-ratio:var(--ar,1.6);background:none!important;border-radius:0;display:block}
+@media(max-width:860px){.vwrap{width:min(100%,42dvh)!important}}
 </style></head><body>
 <div class="bg"><i></i><i></i><i></i></div>
 <header class="top rise"><div class="brand"><div class="orb"></div><div><h1>MagicMall <em>Card Maker</em></h1><p class="sub">Design, preview and export animated Telegram cards</p></div></div><button class="ghost" id="theme" aria-label="Toggle light / dark">◐</button></header>
@@ -182,7 +190,7 @@ button{touch-action:manipulation}
   <div class="row one"><div><label>Wallet address — 48 chars → 6 right + 6 left, 4 each</label><input type="text" id="wallet" spellcheck="false"><div class="chk"><input type="checkbox" id="upper"><span id="cnt"></span>&nbsp;·&nbsp;uppercase</div></div></div>
   <div class="row one"><div><label>Username chip (empty = hidden)</label><input type="text" id="user"></div></div></div>
  <div class="panel rise" data-tab="stickers" style="--i:4"><h2><b>4</b>NFT stickers</h2>
-  <label>Gift Changes — pick an original or a model (static previews, frozen on frame 0)</label>
+  <label>Pick an original or a model. It plays its animation on your card.</label>
   <div class="pkbar"><input type="text" id="gq" placeholder="Search…" maxlength="40" autocomplete="off"><button id="gload" class="p">Load gifts</button></div>
   <div class="crumb" id="crumb" hidden><button id="gback">← All gifts</button><b id="gname"></b></div>
   <div class="tabs" id="tabs" hidden><button type="button" data-m="o" class="on">Original</button><button type="button" data-m="m">Models <span id="mcnt"></span></button></div>
@@ -384,7 +392,22 @@ function buyLabel(){const b=$('buy');if(!b)return;b.textContent=INFO.price==null
 const LIM=65536;let seq=0;
 function setSize(kb){const z=kb;$('info').textContent='TGS '+(z/1024).toFixed(1)+' KB';$('bar').style.width=Math.min(100,z/LIM*100)+'%';$('bar').className=z>LIM?'over':'';
   $('msz').textContent=(z/1024).toFixed(1)+' KB of 64 KB'+(z>LIM?' — too large for a Telegram sticker. Lower the detail, remove a sticker, or press Auto-fit. Or use “Get as JSON” in the Size tab.':'');}
-function showImg(r){let im=$('pimg');if(!im){im=new Image();im.id='pimg';im.alt='Card preview (watermarked)';$('view').appendChild(im);}im.src='data:'+r.mime+';base64,'+r.img;}
+function boxFromAlpha(d,cw,ch,W,H,pad){let x0=cw,y0=ch,x1=-1,y1=-1;
+  for(let y=0;y<ch;y++)for(let x=0;x<cw;x++)if(d[(y*cw+x)*4+3]>12){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y;}
+  if(x1<0)return null;const bw=x1-x0+1,bh=y1-y0+1,px=bw*pad,py=bh*pad;
+  x0=Math.max(0,x0-px);y0=Math.max(0,y0-py);x1=Math.min(cw,x1+1+px);y1=Math.min(ch,y1+1+py);
+  const f={x:x0/cw,y:y0/ch,w:(x1-x0)/cw,h:(y1-y0)/ch};f.ar=(f.w*W)/(f.h*H);return f;}
+function alphaBox(img,pad){const W=img.naturalWidth,H=img.naturalHeight;if(!W||!H)return null;
+  const s=Math.min(1,160/Math.max(W,H)),c=document.createElement('canvas');c.width=Math.max(1,Math.round(W*s));c.height=Math.max(1,Math.round(H*s));
+  const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(img,0,0,c.width,c.height);
+  try{return boxFromAlpha(g.getImageData(0,0,c.width,c.height).data,c.width,c.height,W,H,pad);}catch(e){return null;}}
+function cropTo(wrap,img,b){
+  if(!b){wrap.style.removeProperty('--ar');img.style.cssText='';return;}
+  wrap.style.setProperty('--ar',b.ar.toFixed(4));
+  img.style.cssText='position:absolute;max-width:none;object-fit:fill;width:'+(100/b.w).toFixed(3)+'%;height:'+(100/b.h).toFixed(3)+'%;left:'+(-100*b.x/b.w).toFixed(3)+'%;top:'+(-100*b.y/b.h).toFixed(3)+'%';}
+let PVB=null;
+function showImg(r){let im=$('pimg');if(!im){im=new Image();im.id='pimg';im.alt='Card preview (watermarked)';$('view').appendChild(im);}
+  im.onload=()=>{if(!PVB)PVB=alphaBox(im,.1);cropTo($('view'),im,PVB);};im.src='data:'+r.mime+';base64,'+r.img;}
 async function render(animated){const my=++seq;
   try{const r=await rpc('preview',{config:cfg(),animated:!!animated});if(my!==seq)return;msg('');showImg(r);setSize(r.size);CANDS=r.candidates||[];renderSw();
     if(S._applyAuto){S._applyAuto=false;if(S.autoColor&&CANDS.length){setColors(palFrom(CANDS[0]),true);return;}}}
@@ -427,15 +450,15 @@ for(const n in FXP){const b=document.createElement('button');b.textContent=n;b.o
 for(const k in S.fx)$('f_'+k).onchange=e=>{S.fx[k]=e.target.checked;later();};
 // card designs with live thumbnails
 const VB={auto:null,dark:'#0b0f1a',light:'#e9edf5',colour:'linear-gradient(135deg,#ff7ab6,#7a5cff 45%,#1fd1f9)',photo:'radial-gradient(circle at 20% 25%,#ffd27a 0,transparent 35%),radial-gradient(circle at 80% 70%,#5aa7ff 0,transparent 40%),linear-gradient(160deg,#2b3a67,#6b3fa0 55%,#e07a5f)'};let vb='auto';
-function applyBg(){const v=vb==='auto'?(DES[S.design]||{}).bg:VB[vb];$('view').style.background=v||'';}
+function applyBg(){const v=vb==='auto'?'':VB[vb];$('view').style.background=v||'';}
 for(const k of['auto','dark','light','colour','photo']){const b=document.createElement('button');b.title=k==='auto'?'Auto (design default)':k;b.setAttribute('aria-label','Preview background '+k);b.style.cssText='width:26px;height:26px;border-radius:50%;padding:0;animation:none;background:'+(VB[k]||'conic-gradient(#888,#ddd,#888)');b.onclick=()=>{vb=k;applyBg();};$('vbs').appendChild(b);}
-const TH={};let thT=0;
+const TH={};let thT=0,THB=null;
 function markDesign(){document.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on',b.dataset.k===S.design));}
 DESIGN_KEYS.forEach(k=>{const b=document.createElement('button');b.type='button';b.className='dbtn';b.dataset.k=k;
   const th=document.createElement('div');th.className='dth';const n=document.createElement('b');n.textContent=DES[k].name;const s=document.createElement('small');s.textContent=DES[k].tag;
-  if(DES[k].bg)th.style.background=DES[k].bg;b.append(th,n,s);b.onclick=()=>{S.design=k;markDesign();applyBg();render();};$('dgrid').appendChild(b);TH[k]={el:th};});
+  b.append(th,n,s);b.onclick=()=>{S.design=k;markDesign();applyBg();render();};$('dgrid').appendChild(b);TH[k]={el:th};});
 function thumbs(){clearTimeout(thT);thT=setTimeout(async()=>{try{const r=await rpc('thumbs',{config:cfg()});
-  for(const k in r.thumbs){const el=TH[k]&&TH[k].el;if(el){el.textContent='';const i=new Image();i.alt=k;i.src='data:image/png;base64,'+r.thumbs[k];el.appendChild(i);}}}catch(e){}},1300);}
+  for(const k in r.thumbs){const el=TH[k]&&TH[k].el;if(el){el.textContent='';const i=new Image();i.alt=k;i.onload=()=>{if(!THB)THB=alphaBox(i,.04);cropTo(el,i,THB);};i.src='data:image/png;base64,'+r.thumbs[k];el.appendChild(i);}}}catch(e){}},1300);}
 // logo
 function defLogo(){return null;}
 async function gunzipCapped(f,max){const r=f.stream().pipeThrough(new DecompressionStream('gzip')).getReader();let n=0;const parts=[];

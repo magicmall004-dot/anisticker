@@ -88,8 +88,13 @@ export default function CardMaker() {
     const fit = () => {
       const el = frame.current; if (!el) return;
       const top = Math.max(0, el.getBoundingClientRect().top);
-      const nav = document.querySelector("nav");
-      const navH = nav && getComputedStyle(nav).position === "fixed" ? nav.offsetHeight : 0;
+      let navH = 0;
+      document.querySelectorAll("body *").forEach((n) => {
+        if (n.tagName === "IFRAME") return;
+        if (getComputedStyle(n).position !== "fixed") return;
+        const r = n.getBoundingClientRect();
+        if (r.width >= window.innerWidth * 0.8 && r.height > 30 && r.height < 170 && r.bottom >= window.innerHeight - 2) navH = Math.max(navH, r.height);
+      });
       setFh(Math.max(420, Math.floor(window.innerHeight - top - navH - 6)));
     };
     fit();
