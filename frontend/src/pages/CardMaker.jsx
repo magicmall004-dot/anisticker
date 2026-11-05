@@ -26,6 +26,7 @@ export default function CardMaker() {
   const [prices, setPrices] = useState(null);   // owner only
   const [saving, setSaving] = useState(false);
   const [showPrices, setShowPrices] = useState(false);
+  const [fh, setFh] = useState(560);
   const kvKey = (k) => `mm_cm_${user?.id}_${k}`;
 
   const pushInfo = useCallback((i) => {
@@ -83,24 +84,35 @@ export default function CardMaker() {
     finally { setSaving(false); }
   }
 
+  useEffect(() => {
+    const fit = () => {
+      const el = frame.current; if (!el) return;
+      const top = Math.max(0, el.getBoundingClientRect().top);
+      const nav = document.querySelector("nav");
+      const navH = nav && getComputedStyle(nav).position === "fixed" ? nav.offsetHeight : 0;
+      setFh(Math.max(420, Math.floor(window.innerHeight - top - navH - 6)));
+    };
+    fit();
+    const t = setTimeout(fit, 250);
+    window.addEventListener("resize", fit);
+    return () => { clearTimeout(t); window.removeEventListener("resize", fit); };
+  }, [info, prices, showPrices]);
+
   return (
     <div className="page">
       <div className="page-header">
         <button className="btn btn-ghost" style={{ padding: 6 }} onClick={() => navigate(-1)}><ChevronLeft size={22} /></button>
         <div className="page-title">Wallet Card Maker</div>
-      </div>
-      <div className="page-body" style={{ paddingBottom: 70, paddingTop: 8 }}>
         {info && (
-          <div className="card" style={{ padding: "8px 12px", fontSize: 13 }}>
-            <div className="row-between" style={{ gap: 8 }}>
-              <span>{info.free ? "Free for you ✨" : `Price: ${formatPrice(info.price)}`}</span>
-              <span style={{ color: "var(--hint)" }}>Balance: {formatPrice(info.balance)}</span>
-              {prices && (
-                <button className="btn btn-ghost" style={{ padding: "4px 8px", fontSize: 12 }} onClick={() => setShowPrices((v) => !v)}>⚙ Prices</button>
-              )}
-            </div>
+          <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8, fontSize: 12, color: "var(--hint)" }}>
+            <span>{info.free ? "Free ✨" : formatPrice(info.balance)}</span>
+            {prices && (
+              <button className="btn btn-ghost" style={{ padding: "4px 8px", fontSize: 14 }} onClick={() => setShowPrices((v) => !v)}>⚙</button>
+            )}
           </div>
         )}
+      </div>
+      <div className="page-body" style={{ paddingTop: 6, paddingBottom: 0 }}>
         {prices && showPrices && (
           <div className="card" style={{ padding: "10px 14px" }}>
             <div style={{ fontSize: 12, color: "var(--hint)", marginBottom: 6 }}>Owner: card prices (MMK)</div>
@@ -118,7 +130,7 @@ export default function CardMaker() {
           sandbox="allow-scripts"
           referrerPolicy="no-referrer"
           onLoad={() => info && pushInfo(info)}
-          style={{ width: "100%", height: "calc(100dvh - 185px)", minHeight: 480, border: 0, borderRadius: 14, background: "transparent" }}
+          style={{ width: "100%", height: fh, border: 0, borderRadius: 14, background: "transparent", display: "block" }}
         />
       </div>
     </div>
