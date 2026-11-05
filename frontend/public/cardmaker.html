@@ -196,6 +196,7 @@ button{touch-action:manipulation}
   <div class="tabs" id="tabs" hidden><button type="button" data-m="o" class="on">Original</button><button type="button" data-m="m">Models <span id="mcnt"></span></button></div>
   <div class="grid" id="grid" hidden></div><div id="pkmsg"></div>
   <label style="margin-top:12px">…or upload your own .tgs</label><input type="file" id="nft" accept=".tgs" multiple>
+  <div class="sw2" style="margin-top:12px"><input type="checkbox" id="nplay" checked><label for="nplay" style="margin:0;color:var(--ink)">Play NFT animations <span style="color:var(--mut)">(off = still image)</span></label></div>
   <div id="items"></div></div>
  <div class="panel rise" data-tab="colours" style="--i:5"><h2><b>5</b>Colours</h2>
   <label>NFT Backdrop (Telegram gift colours)</label>
@@ -530,7 +531,7 @@ async function addNft(g,m,ov){
   const n=S.items.length;S.items.push({name:(g+' · '+(m||'Original')).slice(0,60),key:g+'|'+m,thumb:m?pModel(g,m):pOrig(g),x:ov?ov.x:(n%2?430:560),y:ov?ov.y:(n<2?340:200),size:ov?ov.size:170,rot:ov?ov.rot:0,play:!!S.play});
   pk('');toast('Added to card ✓');drawItems();view();refreshAuto(true);}
 // presets, import/export, surprise
-const cfg=()=>{const ups=[],items=S.items.map(i=>{const r={x:i.x,y:i.y,size:i.size,rot:i.rot,play:true};if(i.key)r.key=i.key;else if(i.tgs){ups.push(i.tgs);r.up=ups.length-1;}return r;}).filter(r=>r.key||r.up!==undefined);
+const cfg=()=>{const ups=[],items=S.items.map(i=>{const r={x:i.x,y:i.y,size:i.size,rot:i.rot,play:!!i.play};if(i.key)r.key=i.key;else if(i.tgs){ups.push(i.tgs);r.up=ups.length-1;}return r;}).filter(r=>r.key||r.up!==undefined);
   return{v:1,design:S.design,amount:S.amount,unit:S.unit,sign:S.sign,usd:S.usd,label:S.label,wallet:S.wallet,upper:S.upper,user:S.user,logoSize:S.logoSize,colors:S.colors,autoColor:S.autoColor,show:S.show,fx:S.fx,simp:S.simp,step:S.step,items,uploads:ups,logo:S.logo?{kind:'group',group:S.logo}:'default'};};
 const HEX=/^#[0-9a-f]{6}$/i;
 function norm(c){const o={};for(const k in RULE)o[k]=String(c[k]==null?DEF[k]:c[k]).replace(RULE[k][1],'').slice(0,RULE[k][0]);
@@ -568,6 +569,8 @@ $('fit').onclick=async()=>{$('fit').disabled=true;msg('Optimising…');
   catch(e){msg(e.message);}finally{$('fit').disabled=false;}};
 let KEY=null,KEYCFG='',armed=0;
 function newKey(){const a=new Uint8Array(16);crypto.getRandomValues(a);return Array.from(a,b=>b.toString(16).padStart(2,'0')).join('');}
+S.play=true;S.items.forEach(q=>q.play=true);
+$('nplay').onchange=e=>{S.play=e.target.checked;S.items.forEach(q=>q.play=S.play);later();};
 $('anim').onclick=()=>{$('anim').disabled=true;render(true).finally(()=>setTimeout(()=>$('anim').disabled=false,1500));};
 $('buy').onclick=async()=>{
   const b=$('buy');if(INFO.price==null){msg('Price not loaded yet.');return;}
