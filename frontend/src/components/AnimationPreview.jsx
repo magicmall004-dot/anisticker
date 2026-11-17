@@ -185,9 +185,6 @@ export default function AnimationPreview({ url, fileType, size = "100%", autopla
 
   return (
     <div style={{ width: size, height: size, position: "relative", flexShrink: 0, overflow: "hidden" }}>
-      {error && debugMsg && (
-        <div style={{ position:"absolute", inset:0, zIndex:99, background:"rgba(0,0,0,.85)", color:"#ff5d5d", fontSize:9, padding:4, overflow:"auto", wordBreak:"break-all", lineHeight:1.3 }}>{debugMsg}</div>
-      )}
       {error && (
         <div ref={fallbackRef} style={{ inset:0, position:"absolute", width:"100%", height:"100%" }} />
       )}
