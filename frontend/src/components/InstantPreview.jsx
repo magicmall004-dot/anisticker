@@ -1,4 +1,22 @@
+import { unlockLottie } from "../unlockLottie";
 import { useState, useEffect, useRef, useMemo } from "react";
+
+const GUARD = "\u26A0\uFE0F_PRO_GUARD_";
+const FAKE_KEY = "sh\u0430p\u0435s";
+function repairGuard(o) {
+  if (!o || typeof o !== "object") return;
+  if (Array.isArray(o)) {
+    for (let i = o.length - 1; i >= 0; i--) {
+      if (o[i] && typeof o[i].nm === "string" && o[i].nm.startsWith(GUARD)) o.splice(i, 1); else repairGuard(o[i]);
+    }
+    return;
+  }
+  for (const k of Object.keys(o)) {
+    repairGuard(o[k]);
+    if (k === FAKE_KEY) { o.shapes = o[k]; delete o[k]; }
+  }
+}
+
 
 // JS port of the server's color-matching/replacement logic (routes/instant.py)
 // so the live preview matches what the order actually produces.
@@ -88,7 +106,9 @@ export default function InstantPreview({ fileUrl, colorMap = [], instantColors =
         const r = await fetch(fileUrl);
         const buf = await r.arrayBuffer();
         const pako = (await import("pako")).default;
-        setRawAnim(JSON.parse(pako.inflate(new Uint8Array(buf), { to: "string" })));
+        const anim = JSON.parse(pako.inflate(new Uint8Array(buf), { to: "string" }));
+        repairGuard(anim);
+        setRawAnim(anim);
       } catch (e) { console.error(e); }
     })();
   }, [fileUrl]);
@@ -130,7 +150,7 @@ export default function InstantPreview({ fileUrl, colorMap = [], instantColors =
     import("lottie-web").then(({ default: lottie }) => {
       try { inst.current?.destroy(); } catch (e) {}
       inst.current = lottie.loadAnimation({
-        container: ref.current, renderer: "svg", loop: true, autoplay: true, animationData: processedAnim,
+        container: ref.current, renderer: "svg", loop: true, autoplay: true, animationData: unlockLottie(JSON.parse(JSON.stringify(processedAnim))),
       });
     });
     return () => { try { inst.current?.destroy(); } catch (e) {} };
