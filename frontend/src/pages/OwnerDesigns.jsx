@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import GifButton from "../components/GifButton";
-import { getDesigns, getDesign, getCategories, createDesign, updateDesign, deleteDesign, uploadDesignFile, syncEmojiNow, confirmManualEmoji, verifyEmojiLinks, requestFileViaBot, cleanupOrphanedEmoji } from "../lib/api";
+import { getDesigns, getDesign, getCategories, createDesign, updateDesign, deleteDesign, uploadDesignFile, syncEmojiNow, confirmManualEmoji, verifyEmojiLinks, requestFileViaBot, cleanupOrphanedEmoji, protectDesign } from "../lib/api";
 import LayerPicker from "../components/LayerPicker";
 import { Plus, Edit2, Trash2, Eye, EyeOff, X, Check, Film, Sparkles } from "lucide-react";
 import AnimationPreview from "../components/AnimationPreview";
@@ -117,6 +117,28 @@ function EmojiSyncButton({ design, onSynced }) {
         position:"absolute", top:2, right:2, width:8, height:8, borderRadius:"50%",
         background: colorMap[status], border:"1.5px solid var(--card)",
       }} />
+    </button>
+  );
+}
+
+function ProtectButton({ design, onProtected }) {
+  const [busy, setBusy] = useState(false);
+  if (design.is_protected || design.file_type !== "tgs") return null;
+  async function run() {
+    if (!confirm(`Protect design #${design.custom_id || design.id}?\n\nThis replaces the file in place with a locked copy (a backup is kept in storage). This cannot be easily undone.`)) return;
+    setBusy(true);
+    try {
+      await protectDesign(design.id);
+      onProtected();
+    } catch (e) {
+      alert("Protect failed: " + (e.response?.data?.detail || e.message));
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <button className="btn btn-ghost" style={{ padding:6 }} disabled={busy} onClick={run} title="Protect this design">
+      {busy ? "…" : "🔒"}
     </button>
   );
 }
@@ -705,6 +727,13 @@ export default function OwnerDesigns() {
               </div>
               <div className="row" style={{ gap:4 }}>
                 <GifButton design={d} />
+                <ProtectButton design={d} onProtected={() => loadAll(true)} />
+                {d.is_protected && (
+                  <span style={{ fontSize:10, fontWeight:800, padding:"3px 8px", borderRadius:20,
+                    border:"1px solid var(--danger)", color:"var(--danger)", background:"rgba(255,93,93,.12)" }}>
+                    LOCKED
+                  </span>
+                )}
                 <EmojiSyncButton design={d} onSynced={() => loadAll(true)} />
                 {!d.custom_emoji_id && <ManualConfirmButton design={d} onSynced={() => loadAll(true)} />}
                 <button className="btn btn-ghost" style={{ padding:6 }}
