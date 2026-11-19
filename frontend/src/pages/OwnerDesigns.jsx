@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import GifButton from "../components/GifButton";
-import { getDesigns, getDesign, getCategories, createDesign, updateDesign, deleteDesign, uploadDesignFile, syncEmojiNow, confirmManualEmoji, verifyEmojiLinks, requestFileViaBot, cleanupOrphanedEmoji, protectDesign } from "../lib/api";
+import { getDesigns, getDesign, getCategories, createDesign, updateDesign, deleteDesign, uploadDesignFile, syncEmojiNow, confirmManualEmoji, verifyEmojiLinks, requestFileViaBot, cleanupOrphanedEmoji, protectDesign, bulkAutoProtect, bulkAutoProtectStatus } from "../lib/api";
 import LayerPicker from "../components/LayerPicker";
 import { Plus, Edit2, Trash2, Eye, EyeOff, X, Check, Film, Sparkles } from "lucide-react";
 import AnimationPreview from "../components/AnimationPreview";
@@ -217,9 +217,35 @@ export default function OwnerDesigns() {
   const [fCat, setFCat] = useState("all");
   const [fType, setFType] = useState("all");
   const [fPack, setFPack] = useState("all");
+  const [fLock, setFLock] = useState("all");
+  const [bulkRunning, setBulkRunning] = useState(false);
+  const [bulkStatus, setBulkStatus] = useState(null);
   const fileRef = useRef();
 
   useEffect(() => { loadAll(); }, []);
+
+  // Poll the bulk auto-protect job's progress while it's running (or once,
+  // on page load, in case it was started earlier and is still going / just
+  // finished while this page wasn't open).
+  useEffect(() => {
+    let cancelled = false;
+    let timer = null;
+    async function poll() {
+      try {
+        const st = await bulkAutoProtectStatus();
+        if (cancelled) return;
+        setBulkStatus(st);
+        setBulkRunning(st.running);
+        if (st.running) {
+          timer = setTimeout(poll, 3000);
+        } else if (st.done > 0) {
+          loadAll(true); // refresh so newly-locked/synced designs show up
+        }
+      } catch (e) { /* ignore — status endpoint not critical */ }
+    }
+    poll();
+    return () => { cancelled = true; if (timer) clearTimeout(timer); };
+  }, []);
 
   async function loadAll(silent = false) {
     if (!silent) setLoading(true);
@@ -648,9 +674,11 @@ export default function OwnerDesigns() {
     if (fType !== "all" && d.type !== fType) return false;
     if (fPack === "in" && !d.custom_emoji_id) return false;
     if (fPack === "out" && d.custom_emoji_id) return false;
+    if (fLock === "locked" && !d.is_protected) return false;
+    if (fLock === "unlocked" && d.is_protected) return false;
     return true;
   });
-  const hasFilter = _n || fCat !== "all" || fType !== "all" || fPack !== "all";
+  const hasFilter = _n || fCat !== "all" || fType !== "all" || fPack !== "all" || fLock !== "all";
   const chip = (on) => ({ padding:"6px 12px", borderRadius:99, fontSize:11, fontWeight:700, border:"none", cursor:"pointer", whiteSpace:"nowrap", flexShrink:0, background:on?"rgba(var(--accent-rgb),0.15)":"rgba(255,255,255,0.06)", color:on?"var(--accent)":"var(--hint)" });
 
   return (
@@ -667,6 +695,33 @@ export default function OwnerDesigns() {
         {cleaning ? "Cleaning up…" : "🧹 Remove Orphaned Emoji Stickers"}
       </button>
 
+      <button
+        className="btn btn-secondary btn-full"
+        disabled={bulkRunning}
+        style={{ marginTop:8 }}
+        onClick={async () => {
+          if (!confirm(
+            "Lock every unprotected design one by one, then try to add/replace each in its emoji pack. " +
+            "Runs in the background — you can keep using the app while it works. " +
+            "Anything that can't auto-sync will be sent to you via the bot to add manually; sync it again here once you've confirmed it."
+          )) return;
+          try {
+            await bulkAutoProtect();
+            setBulkRunning(true);
+          } catch (e) {
+            alert("Couldn't start: " + (e.response?.data?.detail || e.message));
+          }
+        }}
+      >
+        {bulkRunning ? "Auto-protecting…" : "🔁 Auto-protect all unlocked designs"}
+      </button>
+      {bulkStatus && (bulkStatus.running || bulkStatus.done > 0) && (
+        <div style={{ fontSize:11, color:"var(--hint)", marginTop:4, textAlign:"center" }}>
+          {bulkStatus.done} / {bulkStatus.total} done &middot; {bulkStatus.ok} synced &middot; {bulkStatus.failed} need manual add
+          {!bulkStatus.running && " — finished"}
+        </div>
+      )}
+
       <input className="input" value={dq} onChange={(e) => setDq(e.target.value)} placeholder="Search ID, #custom ID or name…" style={{ marginTop:10 }} />
       <div className="scroll-row" style={{ marginTop:8 }}>
         <button style={chip(fCat==="all")} onClick={() => setFCat("all")}>All categories</button>
@@ -682,9 +737,14 @@ export default function OwnerDesigns() {
         <button style={chip(fPack==="in")} onClick={() => setFPack(fPack==="in"?"all":"in")}>🟢 In emoji pack</button>
         <button style={chip(fPack==="out")} onClick={() => setFPack(fPack==="out"?"all":"out")}>🔴 Not in pack</button>
       </div>
+      <div className="scroll-row" style={{ marginTop:6 }}>
+        <button style={chip(fLock==="all")} onClick={() => setFLock("all")}>Any protection</button>
+        <button style={chip(fLock==="locked")} onClick={() => setFLock(fLock==="locked"?"all":"locked")}>🔒 Locked</button>
+        <button style={chip(fLock==="unlocked")} onClick={() => setFLock(fLock==="unlocked"?"all":"unlocked")}>🔓 Unlocked</button>
+      </div>
       <div className="row-between" style={{ fontSize:11, color:"var(--hint)", margin:"8px 2px 2px" }}>
         <span>{filteredDesigns.length} of {designs.length} designs</span>
-        {hasFilter && <button className="btn btn-ghost" style={{ padding:"2px 8px", fontSize:11 }} onClick={() => { setDq(""); setFCat("all"); setFType("all"); setFPack("all"); }}>Clear filters</button>}
+        {hasFilter && <button className="btn btn-ghost" style={{ padding:"2px 8px", fontSize:11 }} onClick={() => { setDq(""); setFCat("all"); setFType("all"); setFPack("all"); setFLock("all"); }}>Clear filters</button>}
       </div>
 
       {loading ? (

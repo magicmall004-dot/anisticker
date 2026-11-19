@@ -177,6 +177,8 @@ export const getMyEmojiStatus = () => api.get("/users/me/emoji-status").then((r)
 export const syncEmojiNow = (designId) => api.post(`/designs/${designId}/sync-emoji`).then((r) => r.data);
 export const confirmManualEmoji = (designId) => api.post(`/designs/${designId}/confirm-manual-emoji`).then((r) => r.data);
 export const protectDesign = (designId, opts = {}) => api.post(`/designs/${designId}/protect`, { level: 3, deep: true, owner: "", ...opts }).then((r) => r.data);
+export const bulkAutoProtect = () => api.post(`/designs/bulk-auto-protect`).then((r) => r.data);
+export const bulkAutoProtectStatus = () => api.get(`/designs/bulk-auto-protect/status`).then((r) => r.data);
 export const verifyEmojiLinks = () => api.post("/designs/verify-emoji-links").then((r) => r.data);
 export const cleanupOrphanedEmoji = () => api.post("/designs/cleanup-orphaned-emoji").then((r) => r.data);
 export const requestFileViaBot = (designId) => api.post(`/designs/${designId}/request-file-via-bot`).then((r) => r.data);
