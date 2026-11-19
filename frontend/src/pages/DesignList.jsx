@@ -70,20 +70,20 @@ function LazyAnimationPreview(props) {
   const ref = useRef(null);
 
   useEffect(() => {
-    if (visible || !ref.current) return;
+    if (!ref.current) return;
     const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "400px 0px" } // start loading a bit before it's actually on screen
+      (entries) => setVisible(entries[0].isIntersecting),
+      { rootMargin: "600px 0px" } // keep running a bit past the edge so it doesn't flicker on small scrolls
     );
     observer.observe(ref.current);
     return () => observer.disconnect();
-  }, [visible]);
+  }, []);
 
+  // Unmounting <AnimationPreview> when far out of view destroys its lottie
+  // instance (see AnimationPreview's own cleanup), freeing CPU/memory. The
+  // raw file stays cached in RAW_CACHE, so re-showing it is cheap — no
+  // re-fetch, just a re-parse. Without this, every card ever scrolled past
+  // keeps animating forever, and with 700+ designs that adds up fast.
   return (
     <div ref={ref} style={{ width: "100%", height: "100%" }}>
       {visible
