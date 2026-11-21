@@ -220,6 +220,8 @@ export default function OwnerDesigns() {
   const [fLock, setFLock] = useState("all");
   const [bulkRunning, setBulkRunning] = useState(false);
   const [bulkStatus, setBulkStatus] = useState(null);
+  const [verifyResult, setVerifyResult] = useState(null);
+  const [cleanupResult, setCleanupResult] = useState(null);
   const fileRef = useRef();
 
   useEffect(() => { loadAll(); }, []);
@@ -358,12 +360,12 @@ export default function OwnerDesigns() {
     if (cleaning) return;
     if (!confirm("Remove every emoji-pack sticker that isn't linked to a design? This can't be undone.")) return;
     setCleaning(true);
+    setCleanupResult(null);
     try {
       const res = await cleanupOrphanedEmoji();
-      const n = res.removed_count || 0;
-      alert(n > 0 ? `Removed ${n} orphaned sticker${n===1?"":"s"}.` : "No orphaned stickers found.");
+      setCleanupResult(res);
     } catch (e) {
-      alert("Couldn't clean up: " + (e.response?.data?.detail || e.message));
+      setCleanupResult({ error: e.response?.data?.detail || e.message });
     } finally {
       setCleaning(false);
     }
@@ -372,15 +374,13 @@ export default function OwnerDesigns() {
   async function handleVerifyEmojiLinks() {
     if (verifying) return;
     setVerifying(true);
+    setVerifyResult(null);
     try {
       const res = await verifyEmojiLinks();
-      const n = (res.cleared || []).length;
-      alert(n > 0
-        ? `Checked against Telegram — ${n} design${n===1?"":"s"} had been removed there and ${n===1?"is":"are"} now shown as not-added.`
-        : "Checked against Telegram — everything matches, no changes needed.");
+      setVerifyResult(res);
       await loadAll(true);
     } catch (e) {
-      alert("Couldn't verify: " + (e.response?.data?.detail || e.message));
+      setVerifyResult({ error: e.response?.data?.detail || e.message });
     } finally {
       setVerifying(false);
     }
@@ -690,10 +690,55 @@ export default function OwnerDesigns() {
       <button className="btn btn-secondary btn-full" disabled={verifying} onClick={handleVerifyEmojiLinks} style={{ marginTop:8 }}>
         {verifying ? "Checking against Telegram…" : "Verify Emoji Status vs Telegram"}
       </button>
+      {verifyResult && (
+        <div className="card" style={{ marginTop:6, padding:10, fontSize:12 }}>
+          <div className="row-between">
+            <strong>
+              {verifyResult.error ? "Verify failed"
+                : (verifyResult.cleared || []).length === 0 ? "Everything matches — no changes"
+                : `${verifyResult.cleared.length} design${verifyResult.cleared.length===1?"":"s"} no longer in Telegram`}
+            </strong>
+            <button className="btn btn-ghost" style={{ padding:"2px 8px", fontSize:11 }} onClick={() => setVerifyResult(null)}>Dismiss</button>
+          </div>
+          {verifyResult.error && <div style={{ color:"var(--danger)", marginTop:4 }}>{verifyResult.error}</div>}
+          {(verifyResult.cleared || []).length > 0 && (
+            <div style={{ marginTop:6, display:"flex", flexWrap:"wrap", gap:6 }}>
+              {verifyResult.cleared.map((d) => (
+                <span key={d.id} style={{ padding:"3px 8px", borderRadius:8, background:"rgba(255,93,93,.12)", color:"var(--danger)", fontSize:11 }}>
+                  {d.custom_id ? `#${d.custom_id}` : d.id.slice(0,8)} {d.name && d.name !== "Design" ? `· ${d.name}` : ""}
+                </span>
+              ))}
+            </div>
+          )}
+          {(verifyResult.cleared || []).length > 0 && (
+            <div style={{ marginTop:6, color:"var(--hint)" }}>These now show 🔴 and need Sync or manual confirm again.</div>
+          )}
+        </div>
+      )}
 
       <button className="btn btn-secondary btn-full" disabled={cleaning} onClick={handleCleanupOrphanedEmoji} style={{ marginTop:8 }}>
         {cleaning ? "Cleaning up…" : "🧹 Remove Orphaned Emoji Stickers"}
       </button>
+      {cleanupResult && (
+        <div className="card" style={{ marginTop:6, padding:10, fontSize:12 }}>
+          <div className="row-between">
+            <strong>
+              {cleanupResult.error ? "Cleanup failed"
+                : (cleanupResult.removed_count || 0) === 0 ? "No orphaned stickers found"
+                : `Removed ${cleanupResult.removed_count} orphaned sticker${cleanupResult.removed_count===1?"":"s"}`}
+            </strong>
+            <button className="btn btn-ghost" style={{ padding:"2px 8px", fontSize:11 }} onClick={() => setCleanupResult(null)}>Dismiss</button>
+          </div>
+          {cleanupResult.error && <div style={{ color:"var(--danger)", marginTop:4 }}>{cleanupResult.error}</div>}
+          {(cleanupResult.removed || []).length > 0 && (
+            <div style={{ marginTop:6, display:"flex", flexDirection:"column", gap:4 }}>
+              {cleanupResult.removed.map((r, i) => (
+                <div key={i} style={{ color:"var(--hint)" }}>{r.pack} &middot; {r.file_id.slice(0,16)}&hellip;</div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <button
         className="btn btn-secondary btn-full"
