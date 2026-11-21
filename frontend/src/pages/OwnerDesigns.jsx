@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import GifButton from "../components/GifButton";
-import { getDesigns, getDesign, getCategories, createDesign, updateDesign, deleteDesign, uploadDesignFile, syncEmojiNow, confirmManualEmoji, verifyEmojiLinks, requestFileViaBot, cleanupOrphanedEmoji, protectDesign, bulkAutoProtect, bulkAutoProtectStatus } from "../lib/api";
+import { getDesigns, getDesign, getCategories, createDesign, updateDesign, deleteDesign, uploadDesignFile, syncEmojiNow, confirmManualEmoji, verifyEmojiLinks, requestFileViaBot, cleanupOrphanedEmoji, cleanupOrphanedEmojiStatus, protectDesign, bulkAutoProtect, bulkAutoProtectStatus } from "../lib/api";
 import LayerPicker from "../components/LayerPicker";
 import { Plus, Edit2, Trash2, Eye, EyeOff, X, Check, Film, Sparkles } from "lucide-react";
 import AnimationPreview from "../components/AnimationPreview";
@@ -358,16 +358,29 @@ export default function OwnerDesigns() {
 
   async function handleCleanupOrphanedEmoji() {
     if (cleaning) return;
-    if (!confirm("Remove every emoji-pack sticker that isn't linked to a design? This can't be undone.")) return;
+    if (!confirm("Remove every emoji-pack sticker that isn't linked to a design, across ALL packs? This can't be undone. Runs in the background — may take a few minutes across many packs.")) return;
     setCleaning(true);
     setCleanupResult(null);
     try {
-      const res = await cleanupOrphanedEmoji();
-      setCleanupResult(res);
+      await cleanupOrphanedEmoji();
+      const poll = async () => {
+        try {
+          const st = await cleanupOrphanedEmojiStatus();
+          if (st.running) {
+            setTimeout(poll, 3000);
+          } else {
+            setCleaning(false);
+            setCleanupResult(st.error ? { error: st.error } : { removed_count: st.removed_count, removed: st.removed });
+          }
+        } catch (e) {
+          setCleaning(false);
+          setCleanupResult({ error: e.response?.data?.detail || e.message });
+        }
+      };
+      poll();
     } catch (e) {
-      setCleanupResult({ error: e.response?.data?.detail || e.message });
-    } finally {
       setCleaning(false);
+      setCleanupResult({ error: e.response?.data?.detail || e.message });
     }
   }
 
